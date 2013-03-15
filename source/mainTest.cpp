@@ -9,15 +9,18 @@ int main(){
     int keypress = 0;
     Cam Camera;
 
-    // Activating the devices 0 and 1
-    Camera.Devices[0].capturing = true;
-    Camera.Devices[1].capturing = true;
-
     // Change the resolutions
-    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[0];
-    Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[0];
+    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
+    Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[8];
+    Camera.Devices[2].resolution_active = Camera.Devices[2].resolutions[2];
 
+    // Activating all the devices
+    // Camera.changeStatus();
+    // Activating the devices 0 and 1
+    Camera.changeStatus(0);
+    Camera.changeStatus(1);
 
+    // Show all the devices information
     // Camera.printDevicesInfo();
 
     for(int i=0; i<Camera.get_devices_number(); i++){

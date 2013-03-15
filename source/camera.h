@@ -60,18 +60,22 @@ public:
     */
     void printDevicesInfo();
 
+    /** Change the status flag capturing of a device
+    @param[in] device to change status ( Wihtout param change all devices)
+    @author Juan Manuel Ruiz
+    */
+    void changeStatus( int device=-1 );
+
     /** Get stream of images from the devices
     @author Juan Manuel Ruiz
     */
     void streamImage();
-
 
     // Getters and Setters
     /** Get the number of devices available
     @author Juan Manuel Ruiz
     */
     int get_devices_number();
-
 
 private:
 

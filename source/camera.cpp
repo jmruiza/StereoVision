@@ -6,7 +6,6 @@ Cam::Cam(){
     if( get_devices_number() > 0 ){
         setCommonResolutions();
         getDevicesInfo();
-        printDevicesInfo();
     }
 }
 
@@ -22,40 +21,75 @@ int Cam::get_devices_number(){
 
 // Operative Method's
 
-// Stream of images from the devices
-void Cam::streamImage(){
-    int cont = 0;
-    for(int i=0; i<get_devices_number(); i++){
-        if( Devices[i].capturing ){
+// Change the status flag capturing of a device
+void Cam::changeStatus(int device){
+    if( device < 0 ){
+        for(int i=0; i<get_devices_number(); i++){
+            Devices[i].capturing = !Devices[i].capturing;
+            if( Devices[i].capturing ){
+                /*
+                 * Opens the capture device.
+                 * If well use "CvCapture* capture = cvCaptureFromCAM( disp );" works fine,
+                 * it can't handles the camera params.
+                 * We prefer use:  cvCreateCameraCapture()
+                 */
+               Devices[i].capture  = cvCreateCameraCapture( Devices[i].device_id );
+
+                // Check Device
+                if(!Devices[i].capture){
+                    std::cout << "Error: Cannot create Capture Device  for " << device << " device " << std::endl;
+                    return;
+                }
+                /*
+                 * Set Resolution, For other camera manipulable parameters check documentation: cvSetCaptureProperty
+                 */
+                cvSetCaptureProperty( Devices[i].capture, CV_CAP_PROP_FRAME_WIDTH,  Devices[i].resolution_active.width );
+                cvSetCaptureProperty( Devices[i].capture, CV_CAP_PROP_FRAME_HEIGHT,  Devices[i].resolution_active.height );
+
+            }
+            else{
+                cvReleaseCapture( &Devices[i].capture );
+            }
+        }
+    }
+    else if( device >= 0 && device < get_devices_number() ){
+        Devices[device].capturing = !Devices[device].capturing;
+        if( Devices[device].capturing ){
             /*
              * Opens the capture device.
              * If well use "CvCapture* capture = cvCaptureFromCAM( disp );" works fine,
              * it can't handles the camera params.
              * We prefer use:  cvCreateCameraCapture()
              */
-           // CvCapture* capture = cvCreateCameraCapture( Devices[i].device_id );
-            Devices[i].capture  = cvCreateCameraCapture( Devices[i].device_id );
+           Devices[device].capture  = cvCreateCameraCapture( Devices[device].device_id );
 
             // Check Device
-            // if ( !capture ) {
-            if(!Devices[i].capture){
-                /*
-                fprintf( stderr, "ERROR: Unknown Capture Device  \n", device );
-                getchar();
-                */
+            if(!Devices[device].capture){
+                std::cout << "Error: Cannot create Capture Device  for " << device << " device " << std::endl;
                 return;
             }
             /*
              * Set Resolution, For other camera manipulable parameters check documentation: cvSetCaptureProperty
              */
-            // cvSetCaptureProperty( capture, CV_CAP_PROP_FRAME_WIDTH,  Devices[i].resolution_active.x );
-            // cvSetCaptureProperty( capture, CV_CAP_PROP_FRAME_HEIGHT,  Devices[i].resolution_active.y );
-            cvSetCaptureProperty( Devices[i].capture, CV_CAP_PROP_FRAME_WIDTH,  Devices[i].resolution_active.width );
-            cvSetCaptureProperty( Devices[i].capture, CV_CAP_PROP_FRAME_HEIGHT,  Devices[i].resolution_active.height );
+            cvSetCaptureProperty( Devices[device].capture, CV_CAP_PROP_FRAME_WIDTH,  Devices[device].resolution_active.width );
+            cvSetCaptureProperty( Devices[device].capture, CV_CAP_PROP_FRAME_HEIGHT,  Devices[device].resolution_active.height );
 
+        }
+        else{
+            cvReleaseCapture( &Devices[device].capture );
+        }
+    }
+}
+
+// Stream of images from the devices
+void Cam::streamImage(){
+    int cont = 0;
+    IplImage* frame;
+
+    for(int i=0; i<get_devices_number(); i++){
+        if( Devices[i].capturing ){
             // Get frame
-            // IplImage* frame = cvQueryFrame( capture );
-            IplImage* frame = cvQueryFrame( Devices[i].capture );
+            frame = cvQueryFrame( Devices[i].capture );
 
             // Check frame
             if ( !frame ) {
@@ -71,9 +105,6 @@ void Cam::streamImage(){
 
             cv::Mat tmp = frame;
             tmp.copyTo( Devices[i].image_buffer );
-
-           // cvReleaseCapture( &capture );
-           cvReleaseCapture( &Devices[i].capture );
         }
         else{
             cont++;
@@ -179,7 +210,7 @@ void Cam::printDevicesInfo(){
         std::cout << " - Device Resolutions: " << Devices[i].resolutions_number << std::endl;
 
         for(int j=0; j<Devices[i].resolutions_number; j++){
-            std::cout << " -- [" << j+1 << "] " <<
+            std::cout << " -- [" << j << "] " <<
                          Devices[i].resolutions[j].width << " x " <<
                          Devices[i].resolutions[j].height << std::endl;
         }
