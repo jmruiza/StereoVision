@@ -1,5 +1,5 @@
 #include <iostream>
-#include <string>
+#include <iomanip>
 
 #include "camera.h"
 
@@ -23,24 +23,15 @@ int main(){
     // Show all the devices information
     // Camera.printDevicesInfo();
 
-    for(int i=0; i<Camera.get_devices_number(); i++){
-        if( Camera.Devices[i].capturing ){
-            // Create namedWindows dynamically
-            stringstream str;
-            str << i;
-            cvNamedWindow(str.str().c_str());
-            cv::imshow(str.str().c_str(), Camera.Devices[i].image_buffer);
-        }
-    }
-
+    int imgCont = 1;
     while ( 1 ) {
         Camera.streamImage();
 
         for(int i=0; i<Camera.get_devices_number(); i++){
             if( Camera.Devices[i].capturing ){
-                // Create namedWindows dynamically
+                // Show images dynamically
                 stringstream str;
-                str << i;
+                str << "Cam: " << i;
                 cv::imshow(str.str().c_str(), Camera.Devices[i].image_buffer);
             }
         }
@@ -48,9 +39,23 @@ int main(){
         // Eliminate High bits in keypress with AND operator
         keypress = cvWaitKey(1) & 255;
 
-        // Until press Enter key...
-        if( keypress == 13 || keypress == 27 ){
+        // If the press key Esc...
+        if( keypress == 27 ){
             break;
+        }
+
+        // If the press key Esc...
+        if( keypress == 13 ){
+            for(int i=0; i<Camera.get_devices_number(); i++){
+                if( Camera.Devices[i].capturing ){
+                    // Save images dynamically
+                    stringstream str;
+                    str << "C" << setw(2) << setfill('0') << i <<
+                           "-" << setw(2) << setfill('0') << imgCont << ".jpg";
+                    cv::imwrite( str.str().c_str(), Camera.Devices[i].image_buffer);
+                }
+            }
+            imgCont++;
         }
     }
 
