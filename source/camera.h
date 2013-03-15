@@ -41,11 +41,11 @@ public:
     struct Device{
         int device_id;                          // ID (number) of device
         int resolutions_number;                 // Number of resolutions available for the device
-        cv::Point2f resolutions[N_RESOLUTIONS]; // Resolutions available for the device
+        cv::Size resolutions[N_RESOLUTIONS];    // Resolutions available for the device
         bool capturing;                         // Flag to indicate if the device it is used in capture mode
-        cv::Point2f resolution_active;          // Resolution used
+        cv::Size resolution_active;             // Resolution used
         CvCapture* capture;                     // Capture
-        cv::Mat image_buffer;                  // Image buffer captured
+        cv::Mat image_buffer;                   // Image buffer captured
     };
 
      /** Vector of devices information */
@@ -80,7 +80,7 @@ private:
     int n_devices;
 
     /** Resolutions available */
-    cv::Point2f common_resolutions[N_RESOLUTIONS];
+    cv::Size common_resolutions[N_RESOLUTIONS];
 
     // Attributes for a specific device
 

@@ -14,10 +14,8 @@ int main(){
     Camera.Devices[1].capturing = true;
 
     // Change the resolutions
-    Camera.Devices[0].resolution_active.x = 640;
-    Camera.Devices[0].resolution_active.y = 480;
-    Camera.Devices[1].resolution_active.x = 640;
-    Camera.Devices[1].resolution_active.y = 480;
+    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[0];
+    Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[0];
 
 
     // Camera.printDevicesInfo();
