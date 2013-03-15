@@ -1,0 +1,1 @@
+/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/CMakeFiles/StereoVision.dir

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="StereoVision" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\..\;CMake Files\..\..\..\..\..\usr\;CMake Files\..\..\..\..\..\usr\local\;CMake Files\..\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\..\usr\local\share\OpenCV\;CMake Files\source\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/media/Datos/Desarrollo/QtSDK/StereoVision/build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="edit_cache">
+         <Option working_dir="/media/Datos/Desarrollo/QtSDK/StereoVision/build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 edit_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="rebuild_cache">
+         <Option working_dir="/media/Datos/Desarrollo/QtSDK/StereoVision/build" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 rebuild_cache" />
+            <CompileFile command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="StereoVision">
+         <Option output="/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/StereoVision" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/media/Datos/Desarrollo/QtSDK/StereoVision/build/source" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_OPENGL_LIB" />
+            <Add option="-DQT_GUI_LIB" />
+            <Add option="-DQT_XML_LIB" />
+            <Add option="-DQT_CORE_LIB" />
+            <Add directory="/media/Datos/Desarrollo/QtSDK/StereoVision/build" />
+            <Add directory="/usr/include/qt4" />
+            <Add directory="/usr/include/qt4/QtCore" />
+            <Add directory="/usr/include/qt4/QtGui" />
+            <Add directory="/usr/include/qt4/QtOpenGL" />
+            <Add directory="/usr/include/qt4/QtXml" />
+            <Add directory="/usr/local/include" />
+            <Add directory="/usr/local/include/opencv" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 StereoVision" />
+            <CompileFile command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="StereoVision/fast">
+         <Option output="/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/StereoVision" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/media/Datos/Desarrollo/QtSDK/StereoVision/build/source" />
+         <Option object_output="./" />
+         <Option type="1" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add option="-DQT_OPENGL_LIB" />
+            <Add option="-DQT_GUI_LIB" />
+            <Add option="-DQT_XML_LIB" />
+            <Add option="-DQT_CORE_LIB" />
+            <Add directory="/media/Datos/Desarrollo/QtSDK/StereoVision/build" />
+            <Add directory="/usr/include/qt4" />
+            <Add directory="/usr/include/qt4/QtCore" />
+            <Add directory="/usr/include/qt4/QtGui" />
+            <Add directory="/usr/include/qt4/QtOpenGL" />
+            <Add directory="/usr/include/qt4/QtXml" />
+            <Add directory="/usr/local/include" />
+            <Add directory="/usr/local/include/opencv" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 StereoVision/fast" />
+            <CompileFile command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/make -f &quot;/media/Datos/Desarrollo/QtSDK/StereoVision/build/source/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/source/camera.cpp">
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/source/mainTest.cpp">
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/source/camera.h">
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/../../../../../usr/local/share/OpenCV/OpenCVConfig-version.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\share\OpenCV\" />
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/../../../../../usr/local/share/OpenCV/OpenCVConfig.cmake">
+          <Option virtualFolder="CMake Files\..\..\..\..\..\usr\local\share\OpenCV\" />
+      </Unit>
+      <Unit filename="/media/Datos/Desarrollo/QtSDK/StereoVision/source/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\source\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>
