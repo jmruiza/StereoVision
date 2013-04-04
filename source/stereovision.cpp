@@ -1,5 +1,5 @@
 #include "stereovision.h"
-
+#include "harrisDetector.h"
 
 StereoVision::StereoVision(){
 }
@@ -14,40 +14,47 @@ void StereoVision::processImages(){
     imageLeft.convertTo(tempLeft, -1, alpha, beta);
     imageRight.convertTo(tempRight, -1, alpha, beta);
 
+    tempLeft.copyTo(imageLeft);
+    tempRight.copyTo(imageRight);
+
+    // Create a HarrisDetector Instance
+    HarrisDetector harris;
+    std::vector<cv::Point> pts;
+
+    // Compute Harris Values to left image;
+    harris.detect(imageLeft);
     // Detect Harris Corners
-    cv::Mat cornerStrengthLeft, cornerStrengthRight;
-/*    cv::cornerHarris(imageLeft,cornerStrength,
-                  3,     // neighborhood size
-                     3,     // aperture size
-                     0.01); // Harris parameter
-*/
-    cv::cornerHarris(imageLeft, cornerStrengthLeft, 3, 3, 0.01);
-    cv::cornerHarris(imageRight, cornerStrengthRight, 3, 3, 0.01);
+    harris.getCorners(pts, 0.01);
+    // Draw Harris corners
+    imageLeft_original.copyTo(imageLeft);
+    harris.drawOnImage(imageLeft, pts);
+    pts.erase(pts.begin(), pts.end());
 
-    // threshold the corner strengths
-     cv::Mat harrisCornersLeft, harrisCornersRight;
-     double threshold= 0.0001;
-     cv::threshold(cornerStrengthLeft, harrisCornersLeft, threshold, 255, cv::THRESH_BINARY_INV);
-     cv::threshold(cornerStrengthRight, harrisCornersRight, threshold, 255, cv::THRESH_BINARY_INV);
-
-/*
-    cv::threshold(tempLeft, imageLeft, 130.0, 255, cv::THRESH_BINARY);
-    cv::threshold(tempRight, imageRight, 130.0, 255, cv::THRESH_BINARY);
-*/
-    harrisCornersLeft.copyTo(imageLeft);
-    harrisCornersRight.copyTo(imageRight);
-
+    // Compute Harris Values to Right image;
+    harris.detect(imageRight);
+    // Detect Harris Corners
+    harris.getCorners(pts, 0.01);
+    // Draw Harris corners
+    imageRight_original.copyTo(imageRight);
+    harris.drawOnImage(imageRight, pts);
+    pts.erase(pts.begin(), pts.end());
 }
 
 
 void StereoVision::set_image_Left(cv::Mat image){
     imageLeft_original = image;
-    imageLeft_original.copyTo(imageLeft);
+    if(image.channels() > 1)
+        cv::cvtColor(image, imageLeft, cv::COLOR_BGR2GRAY);
+    else
+        imageLeft_original.copyTo(imageLeft);
 }
 
 void StereoVision::set_image_Right(cv::Mat image){
     imageRight_original = image;
-    imageRight_original.copyTo(imageRight);
+    if(image.channels() > 1)
+        cv::cvtColor(image, imageRight, cv::COLOR_BGR2GRAY);
+    else
+        imageRight_original.copyTo(imageRight);
 }
 
 cv::Mat StereoVision::get_image_Left_original(){

@@ -9,15 +9,17 @@ using namespace cv;
 
 int main(){
     StereoVision stereo;
-    stereo.set_image_Left(imread("C02-01.jpg", 0));
-    stereo.set_image_Right(imread("C01-01.jpg", 0));
+    stereo.set_image_Left(imread("C02-01.jpg"));
+    stereo.set_image_Right(imread("C01-01.jpg"));
     stereo.processImages();
 
     // Original Images
+    /*
     cvNamedWindow("Left - Original");
     imshow("Left - Original", stereo.get_image_Left_original());
     cvNamedWindow("Right - Original");
     imshow("Right - Original", stereo.get_image_Right_original());
+    */
 
     // Processed Images
     cvNamedWindow("Left - Processed");

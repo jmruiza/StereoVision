@@ -20,7 +20,7 @@ set(Stereo_SRC
     main.cpp
     camera.cpp
     stereovision.cpp
-
+    harrisDetector.h
 )
 
 set(Stereo_LIBS
