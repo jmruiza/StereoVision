@@ -23,20 +23,20 @@ public:
     void processImages();
 
     // Getters and Setters
-    void set_image_izq(cv::Mat image);
-    void set_image_der(cv::Mat image);
-    cv::Mat get_image_izq_original();
-    cv::Mat get_image_der_original();
-    cv::Mat get_image_izq_processed();
-    cv::Mat get_image_der_processed();
+    void set_image_Left(cv::Mat image);
+    void set_image_Right(cv::Mat image);
+    cv::Mat get_image_Left_original();
+    cv::Mat get_image_Right_original();
+    cv::Mat get_image_Left_processed();
+    cv::Mat get_image_Right_processed();
 
 private:
-    cv::Mat tempIzq;
-    cv::Mat imageIzq;
-    cv::Mat imageIzq_original;
-    cv::Mat tempDer;
-    cv::Mat imageDer;
-    cv::Mat imageDer_original;
+    cv::Mat tempLeft;
+    cv::Mat imageLeft;
+    cv::Mat imageLeft_original;
+    cv::Mat tempRight;
+    cv::Mat imageRight;
+    cv::Mat imageRight_original;
 
 
 };
