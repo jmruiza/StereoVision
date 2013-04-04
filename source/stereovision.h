@@ -23,20 +23,22 @@ public:
     void processImages();
 
     // Getters and Setters
-    void set_image1(cv::Mat image);
-    void set_image2(cv::Mat image);
-    cv::Mat get_image1_original();
-    cv::Mat get_image2_original();
-    cv::Mat get_image1_processed();
-    cv::Mat get_image2_processed();
+    void set_image_izq(cv::Mat image);
+    void set_image_der(cv::Mat image);
+    cv::Mat get_image_izq_original();
+    cv::Mat get_image_der_original();
+    cv::Mat get_image_izq_processed();
+    cv::Mat get_image_der_processed();
 
 private:
-    cv::Mat imageCam1_original;
-    cv::Mat imageCam1;
-    cv::Mat imageCam2_original;
-    cv::Mat imageCam2;
-    cv::Mat temp1;
-    cv::Mat temp2;
+    cv::Mat tempIzq;
+    cv::Mat imageIzq;
+    cv::Mat imageIzq_original;
+    cv::Mat tempDer;
+    cv::Mat imageDer;
+    cv::Mat imageDer_original;
+
+
 };
 
 #endif // STEREOVISION_H
