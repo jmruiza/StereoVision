@@ -10,18 +10,18 @@ int main(){
     Cam Camera;
 
     // Change the resolutions
-    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
+    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[2];
     Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[8];
-    Camera.Devices[2].resolution_active = Camera.Devices[2].resolutions[2];
+    Camera.Devices[2].resolution_active = Camera.Devices[2].resolutions[8];
 
     // Activating all the devices
     // Camera.changeStatus();
     // Activating the devices 0 and 1
-    Camera.changeStatus(0);
     Camera.changeStatus(1);
+    Camera.changeStatus(2);
 
     // Show all the devices information
-    // Camera.printDevicesInfo();
+    Camera.printDevicesInfo();
 
     int imgCont = 1;
     while ( 1 ) {

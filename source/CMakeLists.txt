@@ -19,6 +19,7 @@ target_link_libraries(ClassCam ${ClassCam_LIBS})
 set(Stereo_SRC
     main.cpp
     camera.cpp
+    stereovision.cpp
 )
 
 set(Stereo_LIBS
