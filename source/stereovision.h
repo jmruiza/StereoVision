@@ -21,6 +21,8 @@ public:
     StereoVision();
 
     void processImages();
+    void detectCorners();
+
 
     // Getters and Setters
     void set_image_Left(cv::Mat image);

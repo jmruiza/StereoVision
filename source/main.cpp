@@ -11,6 +11,7 @@ int main(){
     StereoVision stereo;
     stereo.set_image_Left(imread("C02-01.jpg"));
     stereo.set_image_Right(imread("C01-01.jpg"));
+
     stereo.processImages();
 
     // Original Images

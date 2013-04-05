@@ -6,6 +6,7 @@ source-test/harrisDetector.h
 source-test/CMakeList.txt
 source-test/interestPoints.cpp
 source-test/tracking.cpp
+source-test/FeatureDescription.cpp
 
 # Compiled source #
 *.com

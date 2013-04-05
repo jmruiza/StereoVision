@@ -5,18 +5,25 @@ StereoVision::StereoVision(){
 }
 
 void StereoVision::processImages(){
-    double alpha = 2.2; // Gain (1.0 - 3.0)
-    int beta = 1;      // Bias (0 - 100)
-
     tempLeft.create( imageLeft.rows, imageLeft.cols, imageLeft.type() );
     tempRight.create( imageRight.rows, imageRight.cols, imageRight.type() );
 
+    /*
+    double alpha = 2.2; // Gain (1.0 - 3.0)
+    int beta = 1;      // Bias (0 - 100)
     imageLeft.convertTo(tempLeft, -1, alpha, beta);
     imageRight.convertTo(tempRight, -1, alpha, beta);
 
     tempLeft.copyTo(imageLeft);
     tempRight.copyTo(imageRight);
+    */
 
+    // Detect corners
+    detectCorners();
+
+}
+
+void StereoVision::detectCorners(){
     // Create a HarrisDetector Instance
     HarrisDetector harris;
     std::vector<cv::Point> pts;
@@ -28,7 +35,7 @@ void StereoVision::processImages(){
     // Draw Harris corners
     imageLeft_original.copyTo(imageLeft);
     harris.drawOnImage(imageLeft, pts);
-    pts.erase(pts.begin(), pts.end());
+    pts.clear();
 
     // Compute Harris Values to Right image;
     harris.detect(imageRight);
@@ -37,8 +44,9 @@ void StereoVision::processImages(){
     // Draw Harris corners
     imageRight_original.copyTo(imageRight);
     harris.drawOnImage(imageRight, pts);
-    pts.erase(pts.begin(), pts.end());
+    pts.clear();
 }
+
 
 
 void StereoVision::set_image_Left(cv::Mat image){
