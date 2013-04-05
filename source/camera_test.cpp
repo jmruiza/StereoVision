@@ -44,7 +44,7 @@ int main(){
             break;
         }
 
-        // If the press key Esc...
+        // If the press key Enter...
         if( keypress == 13 ){
             for(int i=0; i<Camera.get_devices_number(); i++){
                 if( Camera.Devices[i].capturing ){

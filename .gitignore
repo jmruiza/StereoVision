@@ -2,10 +2,10 @@
 build/
 resources/
 
-source-test/harrisDetector.h
-source-test/CMakeList.txt
-source-test/interestPoints.cpp
 source-test/tracking.cpp
+source-test/CMakeLists.txt
+source-test/harrisDetector.h
+source-test/interestPoints.cpp
 source-test/FeatureDescription.cpp
 
 # Compiled source #
