@@ -8,7 +8,14 @@ void StereoVision::processImages(){
     tempLeft.create( imageLeft.rows, imageLeft.cols, imageLeft.type() );
     tempRight.create( imageRight.rows, imageRight.cols, imageRight.type() );
 
-    /*
+    // Improve Contrast and Bright
+    improve_ContrastBright();
+    // Detect corners
+    detectCorners();
+
+}
+
+void StereoVision::improve_ContrastBright(){
     double alpha = 2.2; // Gain (1.0 - 3.0)
     int beta = 1;      // Bias (0 - 100)
     imageLeft.convertTo(tempLeft, -1, alpha, beta);
@@ -16,11 +23,6 @@ void StereoVision::processImages(){
 
     tempLeft.copyTo(imageLeft);
     tempRight.copyTo(imageRight);
-    */
-
-    // Detect corners
-    detectCorners();
-
 }
 
 void StereoVision::detectCorners(){
