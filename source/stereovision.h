@@ -9,9 +9,11 @@
 #define STEREOVISION_H
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/legacy/legacy.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/nonfree/features2d.hpp>
 
 #include <iostream>
 
@@ -23,6 +25,7 @@ public:
     void processImages();
     void improve_ContrastBright();
     void detectCorners();
+    void matchesDetector();
 
     // Getters and Setters
     void set_image_Left(cv::Mat image);
@@ -31,6 +34,7 @@ public:
     cv::Mat get_image_Right_original();
     cv::Mat get_image_Left_processed();
     cv::Mat get_image_Right_processed();
+    cv::Mat get_image_Matches();
 
 private:
     cv::Mat tempLeft;
@@ -39,8 +43,7 @@ private:
     cv::Mat tempRight;
     cv::Mat imageRight;
     cv::Mat imageRight_original;
-
-
+    cv::Mat imageMatches;
 };
 
 #endif // STEREOVISION_H

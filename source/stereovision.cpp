@@ -9,10 +9,13 @@ void StereoVision::processImages(){
     tempRight.create( imageRight.rows, imageRight.cols, imageRight.type() );
 
     // Improve Contrast and Bright
-    improve_ContrastBright();
-    // Detect corners
-    detectCorners();
+    // improve_ContrastBright();
 
+    // Detect corners
+    // detectCorners();
+
+    // Detect Matches
+    matchesDetector();
 }
 
 void StereoVision::improve_ContrastBright(){
@@ -49,7 +52,33 @@ void StereoVision::detectCorners(){
     pts.clear();
 }
 
+void StereoVision::matchesDetector(){
+    // Detect the keypoints using SURF Detector
+    int minHessian = 400;
 
+    cv::SurfFeatureDetector detector( minHessian );
+
+    std::vector<cv::KeyPoint> keypointsLeft, keypointsRight;
+
+    detector.detect( imageLeft, keypointsLeft );
+    detector.detect( imageRight, keypointsRight );
+
+    // Calculate descriptors (feature vectors)
+    cv::SurfDescriptorExtractor extractor;
+
+    cv::Mat descriptorsLeft, descriptorsRight;
+
+    extractor.compute( imageLeft, keypointsLeft, descriptorsLeft );
+    extractor.compute( imageRight, keypointsRight, descriptorsRight );
+
+    // Matching descriptor vectors with a brute force matcher
+    cv::BruteForceMatcher< cv::L2<float> > matcher;
+    std::vector< cv::DMatch > matches;
+    matcher.match( descriptorsLeft, descriptorsRight, matches );
+
+    // Draw matches
+    drawMatches( imageLeft, keypointsLeft, imageRight, keypointsRight, matches, imageMatches );
+}
 
 void StereoVision::set_image_Left(cv::Mat image){
     imageLeft_original = image;
@@ -81,4 +110,8 @@ cv::Mat StereoVision::get_image_Left_processed(){
 
 cv::Mat StereoVision::get_image_Right_processed(){
     return imageRight;
+}
+
+cv::Mat StereoVision::get_image_Matches(){
+    return imageMatches;
 }

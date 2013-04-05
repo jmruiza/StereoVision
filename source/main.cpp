@@ -20,13 +20,16 @@ int main(){
     imshow("Left - Original", stereo.get_image_Left_original());
     cvNamedWindow("Right - Original");
     imshow("Right - Original", stereo.get_image_Right_original());
-    */
 
     // Processed Images
     cvNamedWindow("Left - Processed");
     imshow("Left - Processed", stereo.get_image_Left_processed());
     cvNamedWindow("Right - Processed");
     imshow("Right - Processed", stereo.get_image_Right_processed());
+    */
+
+    cvNamedWindow("ImageMatches");
+    imshow("ImageMatches", stereo.get_image_Matches());
 
     std::cout << "Press any key to finish.." << std::endl;
     cv::waitKey();
