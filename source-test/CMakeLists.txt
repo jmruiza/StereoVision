@@ -28,3 +28,16 @@ add_executable(Tracking ${Tracking_SRC})
 target_link_libraries(Tracking ${Tracking_LIBS})
 
 # -------------------------------------------------------
+# Project FeatureDescription
+set(FeatureDescription_SRC
+    FeatureDescription.cpp
+)
+
+set(FeatureDescription_LIBS
+    ${OpenCV_LIBS}
+)
+
+add_executable(FeatureDescription ${FeatureDescription_SRC})
+target_link_libraries(FeatureDescription ${FeatureDescription_LIBS})
+
+# -------------------------------------------------------
