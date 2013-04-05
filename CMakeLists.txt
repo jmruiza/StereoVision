@@ -30,5 +30,5 @@ INCLUDE( ${QT_USE_FILE} )
 INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR} )
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 add_subdirectory(source)
-add_subdirectory(source-test)
+#add_subdirectory(source-test)
 

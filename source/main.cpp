@@ -9,27 +9,25 @@ using namespace cv;
 
 int main(){
     StereoVision stereo;
+    stereo.set_image_Left(imread("../../resources/images/C01-01.jpg"));
+    stereo.set_image_Right(imread("../../resources/images/C02-01.jpg"));
 
-    // Original Images
-    /*
-    cvNamedWindow("Left - Original");
-    imshow("Left - Original", stereo.get_image_Left_original());
-    cvNamedWindow("Right - Original");
-    imshow("Right - Original", stereo.get_image_Right_original());
+    if( !stereo.get_image_Left_original().data && !stereo.get_image_Right_original().data )
+        return 0;
 
-    // Processed Images
-    cvNamedWindow("Left - Processed");
-    imshow("Left - Processed", stereo.get_image_Left_processed());
-    cvNamedWindow("Right - Processed");
-    imshow("Right - Processed", stereo.get_image_Right_processed());
-    */
+    stereo.processImages();
 
+    cvNamedWindow("ImageMatches");
+    imshow("ImageMatches", stereo.get_image_Matches());
+    cv::waitKey();
+
+/*
     // Camera class intance
     Cam Camera;
 
     // Change the resolutions
-    Camera.Devices[0].resolution_active = Camera.Devices[1].resolutions[8];
-    Camera.Devices[1].resolution_active = Camera.Devices[2].resolutions[8];
+    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
+    Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[8];
 
     // Activating all the devices
     Camera.changeStatus(0);
@@ -56,7 +54,8 @@ int main(){
             break;
         }
     }
-    cvDestroyAllWindows();    
+*/
+    cvDestroyAllWindows();
 }
 
 

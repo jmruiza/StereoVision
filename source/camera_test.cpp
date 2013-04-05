@@ -10,15 +10,15 @@ int main(){
     Cam Camera;
 
     // Change the resolutions
-    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[2];
+    Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
     Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[8];
-    Camera.Devices[2].resolution_active = Camera.Devices[2].resolutions[8];
+    Camera.Devices[2].resolution_active = Camera.Devices[2].resolutions[2];
 
     // Activating all the devices
     // Camera.changeStatus();
     // Activating the devices 0 and 1
+    Camera.changeStatus(0);
     Camera.changeStatus(1);
-    Camera.changeStatus(2);
 
     // Show all the devices information
     Camera.printDevicesInfo();
@@ -50,7 +50,7 @@ int main(){
                 if( Camera.Devices[i].capturing ){
                     // Save images dynamically
                     stringstream str;
-                    str << "C" << setw(2) << setfill('0') << i <<
+                    str << "../../resources/images/C" << setw(2) << setfill('0') << i <<
                            "-" << setw(2) << setfill('0') << imgCont << ".jpg";
                     cv::imwrite( str.str().c_str(), Camera.Devices[i].image_buffer);
                 }

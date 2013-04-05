@@ -1,6 +1,7 @@
 # Ignored Directories #
 build/
-resources/
+
+#resources/
 
 source-test/tracking.cpp
 source-test/CMakeLists.txt
