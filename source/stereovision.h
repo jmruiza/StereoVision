@@ -27,16 +27,26 @@ public:
     void detectCorners();
     void matchesDetector();
 
+    void generate_image_Fringes();
+    cv::Mat convertToInterger(const cv::Mat &image);
+    void normalizateMatrix(cv::Mat &img, int min, int max);
+    void getImageRangeDouble(const cv::Mat &image, double &min, double &max);
+
     // Getters and Setters
     void set_image_Left(cv::Mat image);
     void set_image_Right(cv::Mat image);
+    void set_image_Fringes(cv::Mat image);
     cv::Mat get_image_Left_original();
     cv::Mat get_image_Right_original();
     cv::Mat get_image_Left_processed();
     cv::Mat get_image_Right_processed();
-    cv::Mat get_image_Matches();
+    cv::Mat get_image_Matches();  
+    cv::Mat get_image_Fringes();
 
 private:
+    double w;
+    double alpha;
+
     cv::Mat tempLeft;
     cv::Mat imageLeft;
     cv::Mat imageLeft_original;
@@ -44,6 +54,7 @@ private:
     cv::Mat imageRight;
     cv::Mat imageRight_original;
     cv::Mat imageMatches;
+    cv::Mat imageFringes;
 };
 
 #endif // STEREOVISION_H

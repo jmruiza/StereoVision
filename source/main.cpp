@@ -8,24 +8,15 @@ using namespace std;
 using namespace cv;
 
 int main(){
-    StereoVision stereo;
+    // StereoVision class instance
+    StereoVision Stereo;
 
-    stereo.set_image_Left(imread("../../resources/images/C01-01.jpg"));
-    stereo.set_image_Right(imread("../../resources/images/C02-01.jpg"));
-
-    if( !stereo.get_image_Left_original().data && !stereo.get_image_Right_original().data )
-        return 0;
-
-    stereo.processImages();
-
-    cvNamedWindow("ImageMatches");
-    imshow("ImageMatches", stereo.get_image_Matches());
-    cv::waitKey();
+    // Generate and show fringes pattern
+    Stereo.generate_image_Fringes();
 
 /*
     // Camera class intance
     Cam Camera;
-
 
     // Change the resolutions
     Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
@@ -37,9 +28,13 @@ int main(){
 
     int keypress = 0;
 
-    while ( 1 ) {
-        Camera.streamImage();
+    // Infinite Loop to image capture
+    // Escape key: Stop Loop
+    // Enter key: Save image
 
+
+    while ( 1 ) {
+        //Camera.streamImage();
         stereo.set_image_Left(Camera.Devices[0].image_buffer);
         stereo.set_image_Right(Camera.Devices[1].image_buffer);
 
@@ -57,7 +52,8 @@ int main(){
         }
     }
 */
-cvDestroyAllWindows();
+    cv::waitKey();
+    cvDestroyAllWindows();
 }
 
 

@@ -80,6 +80,64 @@ void StereoVision::matchesDetector(){
     drawMatches( imageLeft, keypointsLeft, imageRight, keypointsRight, matches, imageMatches );
 }
 
+void StereoVision::generate_image_Fringes(){
+
+    // Dimensions and definitions
+    int M = 300; // Colums
+    int N = 300; // Rows
+    double w = 3.1416 / 3.0;
+    double alpha = 3.1416 / 2.0;
+    int n = 1;
+
+    // Generating s(x,y)
+    cv::Mat s = cv::Mat::zeros(N, M, CV_64F);
+    for(int y=0; y<N; y++)
+        for(int x=0; x<M; x++)
+            s.at<double>(y,x) = cos( w * x + alpha * n);
+
+    // To display
+    // s(x,y)
+    normalizateMatrix(s, 0, 255);
+    cv::Mat s_d = convertToInterger(s);
+    cv::namedWindow("Fringe Pattern"); //, CV_WINDOW_NORMAL);
+    cv::imshow("Fringe Pattern", s_d);
+}
+
+cv::Mat StereoVision::convertToInterger(const cv::Mat &image){
+    cv::Mat im(image.rows, image.cols, CV_8U);
+    for(int y=0; y<image.rows; y++){ // Rows y
+        for(int x=0; x<image.cols; x++){ // Columns x
+            im.at<uchar>(y,x) = image.at<double>(y,x) * 255;
+        }
+    }
+    return im;
+}
+
+void StereoVision::normalizateMatrix(cv::Mat &img, int min, int max){
+    double min2, max2;
+    getImageRangeDouble(img, min2, max2 );
+
+    for(int y=0; y<img.rows; y++){ // Rows y
+        for(int x=0; x<img.cols; x++){ // Columns x
+            img.at<double>(y,x) = ( img.at<double>(y,x) - min2 ) / (max2-min2);
+        }
+    }
+}
+
+void StereoVision::getImageRangeDouble(const cv::Mat &image, double &min, double &max){
+    min = max = image.at<double>(0,0);
+    for(int y=0; y<image.rows; y++){ // Rows y
+        for(int x=0; x<image.cols; x++){ // Columns j
+            if( image.at<double>(y,x) > max )
+                max = image.at<double>(y,x);
+            if( image.at<double>(y,x) < min )
+                min = image.at<double>(y,x);
+        }
+    }
+}
+
+// ================================================================================================
+
 void StereoVision::set_image_Left(cv::Mat image){
     imageLeft_original = image;
     if(image.channels() > 1)
