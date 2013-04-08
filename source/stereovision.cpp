@@ -54,7 +54,7 @@ void StereoVision::detectCorners(){
 
 void StereoVision::matchesDetector(){
     // Detect the keypoints using SURF Detector
-    int minHessian = 400;
+    int minHessian = 1000; // 400;
 
     cv::SurfFeatureDetector detector( minHessian );
 

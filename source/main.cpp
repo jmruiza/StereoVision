@@ -9,6 +9,7 @@ using namespace cv;
 
 int main(){
     StereoVision stereo;
+
     stereo.set_image_Left(imread("../../resources/images/C01-01.jpg"));
     stereo.set_image_Right(imread("../../resources/images/C02-01.jpg"));
 
@@ -24,6 +25,7 @@ int main(){
 /*
     // Camera class intance
     Cam Camera;
+
 
     // Change the resolutions
     Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
@@ -55,7 +57,7 @@ int main(){
         }
     }
 */
-    cvDestroyAllWindows();
+cvDestroyAllWindows();
 }
 
 
