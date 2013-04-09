@@ -11,10 +11,6 @@ int main(){
     // StereoVision class instance
     StereoVision Stereo;
 
-    // Generate and show fringes pattern
-    Stereo.generate_image_Fringes();
-
-/*
     // Camera class intance
     Cam Camera;
 
@@ -22,12 +18,74 @@ int main(){
     Camera.Devices[0].resolution_active = Camera.Devices[0].resolutions[8];
     Camera.Devices[1].resolution_active = Camera.Devices[1].resolutions[8];
 
-    // Activating all the devices
+    // Activate the devices
     Camera.changeStatus(0);
     Camera.changeStatus(1);
 
-    int keypress = 0;
+    // Set the number of images to process
+    Stereo.set_number_of_images(7);
 
+    // Generate and show fringes pattern
+    Stereo.generate_image_Fringes();
+
+    // Initizalizate the image stream
+    Camera.streamImage();
+
+    // Asign the values
+    Stereo.set_image_Left(Camera.Devices[0].image_buffer);
+    Stereo.set_image_Right(Camera.Devices[1].image_buffer);
+
+    // Show the images
+    cvNamedWindow("Left Image");
+    imshow("Left Image", Stereo.get_image_Left_processed());
+
+    cvNamedWindow("Right Image");
+    imshow("Right Image", Stereo.get_image_Right_processed());
+
+    cv::waitKey();
+
+    for(int i=1; i<=Stereo.get_number_of_images(); i++){
+        // Initizalizate the image stream
+        Camera.streamImage();
+
+        // Generate and show fringes pattern
+        Stereo.generate_image_Fringes(i);
+
+        // Asign the values
+        Stereo.set_image_Left(Camera.Devices[0].image_buffer);
+        Stereo.set_image_Right(Camera.Devices[1].image_buffer);
+
+        stringstream str;
+        str << "../../resources/images/CamLeft" << setw(2) << setfill('0') << i << ".jpg";
+        cv::imwrite( str.str().c_str(), Stereo.get_image_Left_original());
+
+        str << "../../resources/images/CamRightt" << setw(2) << setfill('0') << i << ".jpg";
+        cv::imwrite( str.str().c_str(), Stereo.get_image_Right_original());
+
+        // Save images
+        for(int i=0; i<Camera.get_devices_number(); i++){
+            if( Camera.Devices[i].capturing ){
+                // Save images dynamically
+                stringstream str;
+                str << "../../resources/images/Cam" << setw(2) << setfill('0') << i <<
+                       "-" << setw(2) << setfill('0') << i << ".jpg";
+                cv::imwrite( str.str().c_str(), Camera.Devices[i].image_buffer);
+            }
+        }
+
+        // Show the images
+        imshow("Left Image", Stereo.get_image_Left_processed());
+        imshow("Right Image", Stereo.get_image_Right_processed());
+
+        cv::waitKey(1000);
+    }
+
+    // Desactivate the devices
+    Camera.changeStatus(0);
+    Camera.changeStatus(1);
+    Camera.streamImage();
+
+/*
     // Infinite Loop to image capture
     // Escape key: Stop Loop
     // Enter key: Save image

@@ -80,14 +80,13 @@ void StereoVision::matchesDetector(){
     drawMatches( imageLeft, keypointsLeft, imageRight, keypointsRight, matches, imageMatches );
 }
 
-void StereoVision::generate_image_Fringes(){
+void StereoVision::generate_image_Fringes(int n){
 
     // Dimensions and definitions
     int M = 300; // Colums
     int N = 300; // Rows
     double w = 3.1416 / 3.0;
     double alpha = 3.1416 / 2.0;
-    int n = 1;
 
     // Generating s(x,y)
     cv::Mat s = cv::Mat::zeros(N, M, CV_64F);
@@ -138,6 +137,10 @@ void StereoVision::getImageRangeDouble(const cv::Mat &image, double &min, double
 
 // ================================================================================================
 
+void StereoVision::set_number_of_images(int n){
+    number_of_images = n;
+}
+
 void StereoVision::set_image_Left(cv::Mat image){
     imageLeft_original = image;
     if(image.channels() > 1)
@@ -152,6 +155,10 @@ void StereoVision::set_image_Right(cv::Mat image){
         cv::cvtColor(image, imageRight, cv::COLOR_BGR2GRAY);
     else
         imageRight_original.copyTo(imageRight);
+}
+
+int StereoVision::get_number_of_images(){
+    return number_of_images;
 }
 
 cv::Mat StereoVision::get_image_Left_original(){

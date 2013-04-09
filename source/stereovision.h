@@ -27,15 +27,18 @@ public:
     void detectCorners();
     void matchesDetector();
 
-    void generate_image_Fringes();
+    void generate_image_Fringes(int n=1);
     cv::Mat convertToInterger(const cv::Mat &image);
     void normalizateMatrix(cv::Mat &img, int min, int max);
     void getImageRangeDouble(const cv::Mat &image, double &min, double &max);
 
     // Getters and Setters
+    void set_number_of_images(int n);
     void set_image_Left(cv::Mat image);
     void set_image_Right(cv::Mat image);
     void set_image_Fringes(cv::Mat image);
+
+    int get_number_of_images();
     cv::Mat get_image_Left_original();
     cv::Mat get_image_Right_original();
     cv::Mat get_image_Left_processed();
@@ -46,6 +49,7 @@ public:
 private:
     double w;
     double alpha;
+    int number_of_images;
 
     cv::Mat tempLeft;
     cv::Mat imageLeft;
