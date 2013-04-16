@@ -9,6 +9,7 @@ using namespace cv;
 
 int main(){
     int keypress = 0;
+
     int devLeft = 2;
     int devRight = 1;
 
@@ -52,10 +53,10 @@ int main(){
         if( keypress == 13 ){
             // Save images dynamically
             stringstream strLeft;
-            strLeft << "../../resources/images/" << setw(2) << setfill('0') << imgCont << "-Left.jpg";
+            strLeft << "../../resources/images/face" << setw(2) << setfill('0') << imgCont << "-Left.jpg";
             cv::imwrite( strLeft.str().c_str(), Camera.Devices[devLeft].image_buffer);
             stringstream strRight;
-            strRight << "../../resources/images/" << setw(2) << setfill('0') << imgCont << "-Right.jpg";
+            strRight << "../../resources/images/face" << setw(2) << setfill('0') << imgCont << "-Right.jpg";
             cv::imwrite( strRight.str().c_str(), Camera.Devices[devRight].image_buffer);
 
             // Increment image counter

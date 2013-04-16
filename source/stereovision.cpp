@@ -83,9 +83,9 @@ void StereoVision::matchesDetector(){
 void StereoVision::generate_image_Fringes(int n){
 
     // Dimensions and definitions
-    int M = 300; // Colums
-    int N = 300; // Rows
-    double w = 3.1416 / 3.0;
+    int M = 1400; // Colums
+    int N = 1150; // Rows
+    double w = 3.1416 / 10.0;//4.0;
     double alpha = 3.1416 / 2.0;
 
     // Generating s(x,y)
