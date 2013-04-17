@@ -18,10 +18,12 @@ target_link_libraries(ClassCam ${ClassCam_LIBS})
 
 set(Stereo_SRC
     main.cpp
-    camera.cpp
     stereovision.cpp
+
+    camera.cpp
     harrisDetector.h
     fourier.cpp
+    pdi.cpp
 )
 
 set(Stereo_LIBS

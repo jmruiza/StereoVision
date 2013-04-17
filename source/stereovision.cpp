@@ -80,8 +80,6 @@ void StereoVision::matchesDetector(){
     drawMatches( imageLeft, keypointsLeft, imageRight, keypointsRight, matches, imageMatches );
 }
 
-
-
 void StereoVision::generate_image_Fringes(int n){
 
     // Dimensions and definitions

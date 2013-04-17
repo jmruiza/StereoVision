@@ -87,6 +87,10 @@ bool Fourier::FourierDFT(int mode, bool show){
     return true;
 }
 
+bool Fourier::FourierConvolution(int mode, bool show){
+
+}
+
 
 // ================================================================================================
 
