@@ -3,11 +3,37 @@
 
 #include "camera.h"
 #include "stereovision.h"
+#include "fourier.h"
 
 using namespace std;
 using namespace cv;
 
 int main(){
+    Fourier fourier;
+
+    Mat imageLeft = imread("../../resources/images/face01-Left.jpg", 0);
+    Mat imageRight = imread("../../resources/images/face01-Right.jpg", 0);
+
+    // Processing Left Image
+    fourier.set_image_in(imageLeft);
+    fourier.FourierDFT(0,false);
+    Mat imageLeft_Fourier = fourier.get_image_out();
+
+    // Processing Right Image
+    fourier.set_image_in(imageRight);
+    fourier.FourierDFT(0, false);
+    Mat imageRight_Fourier = fourier.get_image_out();
+
+    // Display images
+    imshow("Image Left Fourier", imageLeft_Fourier);
+    imshow("Image Right Fourier", imageRight_Fourier);
+    waitKey();
+
+
+
+
+/*
+    // Capture
     int keypress = 0;
 
     int devLeft = 2;
@@ -63,7 +89,7 @@ int main(){
             imgCont++;
         }
     }
-
+*/
     // std::cout << "Press any key to finish.." << std::endl;
     // cv::waitKey();
     cvDestroyAllWindows();
