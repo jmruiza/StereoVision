@@ -1,4 +1,5 @@
 #include "fourier.h"
+#include "pdi.h"
 
 Fourier::Fourier()
 {
@@ -87,8 +88,44 @@ bool Fourier::FourierDFT(int mode, bool show){
     return true;
 }
 
-bool Fourier::FourierConvolution(int mode, bool show){
+bool Fourier::FourierConvolution(bool show){
+    if(image_in.empty()){
+        return false;
+    }
 
+    PDI pdi;
+    int sigma = 5;
+
+    // Generating Kernel
+    double h0[6*sigma];
+    double h1[6*sigma];
+    pdi.gaussianArrays(sigma, h0, h1);
+
+    // Convert image_in to double
+    cv::Mat g = pdi.convertToDouble(image_in);
+
+    // Normalizate convolution
+    cv::Mat i = cv::Mat::ones(image_in.rows, image_in.cols, CV_64F);
+    cv::Mat eta = pdi.convolutionSeparatedKernel(i, h0, 6*sigma, h1, 6*sigma);
+    cv::Mat f = cv::Mat::zeros(image_in.rows, image_in.cols, CV_64F);
+
+    for(int y=0; y<image_in.rows; y++){
+        for(int x=0; x<image_in.cols; x++){
+            f.at<double>(y,x) = g.at<double>(y,x) / eta.at<double>(y,x);
+        }
+    }
+
+    // Normalize image
+    cv::normalize(f, image_out, 0, 1, CV_MINMAX);
+
+    // Show result
+    if(show){
+        imshow("Input Image", image_in);
+        imshow("Output Image", image_out);
+        cv::waitKey();
+    }
+
+    return true;
 }
 
 

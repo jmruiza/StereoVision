@@ -16,17 +16,32 @@ int main(){
 
     // Processing Left Image
     fourier.set_image_in(imageLeft);
+    // Fourier DFT
     fourier.FourierDFT(0,false);
     Mat imageLeft_Fourier = fourier.get_image_out();
+    // Fourier Convolution
+    fourier.FourierConvolution(false);
+    Mat imageLeft_FourierConv = fourier.get_image_out();
 
-    // Processing Right Image
+
+    // Processing Right Image (Fourier DFT)
     fourier.set_image_in(imageRight);
+    // Fourier DFT
     fourier.FourierDFT(0, false);
     Mat imageRight_Fourier = fourier.get_image_out();
+    // Fourier Convolution
+    fourier.FourierConvolution(false);
+    Mat imageRight_FourierConv = fourier.get_image_out();
+
+
 
     // Display images
-    imshow("Image Left Fourier", imageLeft_Fourier);
-    imshow("Image Right Fourier", imageRight_Fourier);
+    imshow("Image Left Fourier DFT", imageLeft_Fourier);
+    imshow("Image Right Fourier DFT", imageRight_Fourier);
+
+    imshow("Image Left Fourier Convolution", imageLeft_FourierConv);
+    imshow("Image Right Fourier Convolution", imageRight_FourierConv);
+
     waitKey();
 
 

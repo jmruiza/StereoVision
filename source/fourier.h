@@ -30,7 +30,7 @@ public:
     @param[in] Show (true/false) the initial and final images
     @author Juan Manuel Ruiz
     */
-    bool FourierConvolution(int mode=0, bool show=true);
+    bool FourierConvolution(bool show=true);
 
     // Getters and Setters
     void set_image_in(cv::Mat image);
