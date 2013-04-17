@@ -21,6 +21,7 @@ set(Stereo_SRC
     camera.cpp
     stereovision.cpp
     harrisDetector.h
+    fourier.cpp
 )
 
 set(Stereo_LIBS
