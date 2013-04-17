@@ -41,3 +41,18 @@ add_executable(FeatureDescription ${FeatureDescription_SRC})
 target_link_libraries(FeatureDescription ${FeatureDescription_LIBS})
 
 # -------------------------------------------------------
+
+# Project Fourier Transform
+set(Fourier_SRC
+    Fourier.cpp
+)
+
+set(Fourier_LIBS
+    ${OpenCV_LIBS}
+)
+
+add_executable(Fourier ${Fourier_SRC})
+target_link_libraries(Fourier ${Fourier_LIBS})
+
+# -------------------------------------------------------
+
