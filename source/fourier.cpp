@@ -5,8 +5,7 @@ Fourier::Fourier()
 {
 }
 
-
-bool Fourier::FourierDFT(int mode, bool show){
+bool Fourier::FourierDFT(bool display){
     if(image_in.empty()){
         return false;
     }
@@ -47,48 +46,29 @@ bool Fourier::FourierDFT(int mode, bool show){
     magI += cv::Scalar::all(1);
     cv::log(magI, magI);
 
+    // Crop the spectrum, if it has an odd number of rows or columns
+    magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
 
-    if(mode == 0){
-        // Normalize image without Rearrange
-        cv::normalize(magI, image_out, 0, 1, CV_MINMAX);
-    }
-    else{
-        // 6. Crop the spectrum, if it has an odd number of rows or columns
-        magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
+    // Rearrage the spectrum to center the origin
+    magI = FFTShift(magI);
 
-        // Rearrange the quadrants of Fourier image  so that the origin is at the image center
-        int cx = magI.cols/2;
-        int cy = magI.rows/2;
+    // Normalize the spectrum
+    cv::normalize(magI, image_out, 0, 1, CV_MINMAX);
 
-        cv::Mat q0(magI, cv::Rect(0, 0, cx, cy));   // Top-Left - Create a ROI per quadrant
-        cv::Mat q1(magI, cv::Rect(cx, 0, cx, cy));  // Top-Right
-        cv::Mat q2(magI, cv::Rect(0, cy, cx, cy));  // Bottom-Left
-        cv::Mat q3(magI, cv::Rect(cx, cy, cx, cy)); // Bottom-Right
-
-        cv::Mat tmp;                           // swap quadrants (Top-Left with Bottom-Right)
-        q0.copyTo(tmp);
-        q3.copyTo(q0);
-        tmp.copyTo(q3);
-
-        q1.copyTo(tmp);                    // swap quadrant (Top-Right with Bottom-Left)
-        q2.copyTo(q1);
-        tmp.copyTo(q2);
-
-        // 7. Normalize: Transform the matrix with float values into a viewable image form (float between values 0 and 1).
-        cv::normalize(magI, image_out, 0, 1, CV_MINMAX);
-    }
-
-    // 8. Show result
-    if(show){
+    // Show result
+    if(display){
         imshow("Input Image", image_in);
         imshow("spectrum magnitude", image_out);
         cv::waitKey();
     }
 
+
     return true;
 }
 
-bool Fourier::FourierConvolution(bool show){
+
+
+bool Fourier::FourierConvolution(bool display){
     if(image_in.empty()){
         return false;
     }
@@ -119,7 +99,7 @@ bool Fourier::FourierConvolution(bool show){
     cv::normalize(f, image_out, 0, 1, CV_MINMAX);
 
     // Show result
-    if(show){
+    if(display){
         imshow("Input Image", image_in);
         imshow("Output Image", image_out);
         cv::waitKey();
@@ -127,6 +107,46 @@ bool Fourier::FourierConvolution(bool show){
 
     return true;
 }
+
+cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
+    cv::Mat out;
+    image.copyTo(out);
+
+    // Rearrange the quadrants of Fourier image  so that the origin is at the image center
+    int cx = out.cols/2;
+    int cy = out.rows/2;
+
+    // Create a ROI per quadrant
+    cv::Mat q0(out, cv::Rect(0, 0, cx, cy));   // Top-Left
+    cv::Mat q1(out, cv::Rect(cx, 0, cx, cy));  // Top-Right
+    cv::Mat q2(out, cv::Rect(0, cy, cx, cy));  // Bottom-Left
+    cv::Mat q3(out, cv::Rect(cx, cy, cx, cy)); // Bottom-Right
+
+    // swap quadrants (Top-Left with Bottom-Right)
+    cv::Mat tmp;
+    q0.copyTo(tmp);
+    q3.copyTo(q0);
+    tmp.copyTo(q3);
+
+    // swap quadrant (Top-Right with Bottom-Left)
+    q1.copyTo(tmp);
+    q2.copyTo(q1);
+    tmp.copyTo(q2);
+
+    if( display ){
+        cv::Mat im_in;
+        cv::Mat im_out;
+        //  Normalize to display
+        cv::normalize(image, im_in, 0, 1, CV_MINMAX);
+        cv::normalize(out, im_out, 0, 1, CV_MINMAX);
+        // Display images
+        cv::imshow("Image In", image);
+        cv::imshow("Image Out", out);
+    }
+
+    return out;
+}
+
 
 
 // ================================================================================================

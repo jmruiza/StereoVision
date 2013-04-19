@@ -18,19 +18,32 @@ public:
 
     /**
     Compute the Discrete Fourier Transform and show it
-    @param[in] Mode (0-1) crop and rearrange the image
-    @param[in] Show (true/false) the initial and final images
+    @param[in] display (true/false) the initial and final images
     @author Juan Manuel Ruiz
     */
-    bool FourierDFT(int mode=0, bool show=true);
+    bool FourierDFT(bool display=false);
 
     /**
     Compute the Convolution Fourier Transform and show it
-    @param[in] Mode (0-1) crop and rearrange the image
-    @param[in] Show (true/false) the initial and final images
+    @param[in] display (true/false) the initial and final images
     @author Juan Manuel Ruiz
     */
-    bool FourierConvolution(bool show=true);
+    bool FourierConvolution(bool display=false);
+
+    /**
+    Compute the Inverse Fourier Transform and show it
+    @param[in] Display (true/false) the initial and final images
+    @author Juan Manuel Ruiz
+    */
+    cv::Mat FourierInverse(cv::Mat image, bool display=false);
+
+    /**
+    Rearrange the image
+    @param[in] Display (true/false) the initial and final images
+    @author Juan Manuel Ruiz
+    */
+    cv::Mat FFTShift(cv::Mat image, bool display=false);
+
 
     // Getters and Setters
     void set_image_in(cv::Mat image);
