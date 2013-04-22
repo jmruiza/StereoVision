@@ -44,6 +44,22 @@ public:
     */
     cv::Mat FFTShift(cv::Mat image, bool display=false);
 
+    /**
+    Controller to mouse events
+    @param[in] Name of Window
+    @author Juan Manuel Ruiz
+    */
+    void ControlEventMouse( char* nameOfWindow );
+
+    /**
+    Draw a square in image
+    @param[in] x coordinate
+    @param[in] y coordinate
+    @param[in] Size of square
+    @param[cv::Mat] image
+    @author Juan Manuel Ruiz
+    */
+    void DrawSquare( int x, int y, int size, cv::Mat image);
 
     // Getters and Setters
     void set_image_in(cv::Mat image);

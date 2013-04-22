@@ -1,6 +1,21 @@
 #include "fourier.h"
 #include "pdi.h"
 
+// Control mouse events
+void mouseEvent(int evt, int x, int y, int flags, void* param){
+    // Push Down Left Button
+    if(evt==CV_EVENT_LBUTTONDOWN){
+        std::cout << "(" << x << ", " << y << ")" << std::endl;
+    }
+
+    // CV_EVENT_MOUSEMOVE
+    if(evt==CV_EVENT_MOUSEMOVE){
+        std::cout << "(" << x << ", " << y << ")" << std::endl;
+    }
+
+
+}
+
 Fourier::Fourier()
 {
 }
@@ -65,8 +80,6 @@ bool Fourier::FourierDFT(bool display){
 
     return true;
 }
-
-
 
 bool Fourier::FourierConvolution(bool display){
     if(image_in.empty()){
@@ -147,6 +160,14 @@ cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
     return out;
 }
 
+void Fourier::ControlEventMouse( char* nameOfWindow ){
+    cvSetMouseCallback(nameOfWindow, mouseEvent, 0);
+}
+
+void Fourier::DrawSquare( int x, int y, int size, cv::Mat image){
+    cv::Rect rec( x-50, y-50, 100, 100);
+    cv::rectangle(image, rec, cv::Scalar(0));
+}
 
 
 // ================================================================================================

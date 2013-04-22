@@ -17,6 +17,10 @@ int main(){
     cvMoveWindow("Left Image", 0, 0);
     cvMoveWindow("Left Image Fourier", 700, 0);
 
+    // Assigning the controller to mouse events
+    fourier.ControlEventMouse("Left Image Fourier");
+
+
     Mat imageLeft;
     Mat imageRight;
 
