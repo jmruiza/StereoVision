@@ -11,14 +11,6 @@ using namespace cv;
 int main(){
     Fourier fourier;
 
-    cvNamedWindow("Left Image");
-    cvNamedWindow("Left Image Fourier");
-
-    cvMoveWindow("Left Image", 0, 0);
-    cvMoveWindow("Left Image Fourier", 700, 0);
-
-    // Assigning the controller to mouse events
-    fourier.ControlEventMouse("Left Image Fourier");
 
 
     Mat imageLeft;
@@ -34,8 +26,15 @@ int main(){
     // Fourier DFT
     fourier.FourierDFT();
     Mat imageLeft_Fourier = fourier.get_image_out();
+    imageLeft_Fourier = fourier.LobeFilter(imageLeft_Fourier,0);
 
     // Display images
+    namedWindow("Left Image");
+    namedWindow("Left Image Fourier");
+
+    moveWindow("Left Image", 0, 0);
+    moveWindow("Left Image Fourier", 700, 0);
+
     imshow("Left Image",imageLeft);
     imshow("Left Image Fourier", imageLeft_Fourier);
 

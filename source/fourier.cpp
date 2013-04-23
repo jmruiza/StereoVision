@@ -164,15 +164,76 @@ cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
     return out;
 }
 
-void Fourier::ControlEventMouse( char* nameOfWindow ){
-    cv::Point sel_point;
-    cvSetMouseCallback(nameOfWindow, mouseEvent, (void*)(&sel_point));
-    std::cout << sel_point << std::endl;
+cv::Mat Fourier::LobeFilter(cv::Mat image, int mask){
+    cv::Mat image_copy;
+    image.copyTo(image_copy);
+
+    // Returned Point
+    cv::Point ret_point;
+    // Window to selection
+    cv::namedWindow("Select a Lobe");
+
+    // Event Mouse controller
+    cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&ret_point));
+
+    // Until dont press key Enter
+    while(cv::waitKey(100) != 13){
+        image_copy = DrawSquare(ret_point, 100, image);
+        cv::imshow("Select a Lobe", image_copy);
+        // Print the returned point
+        std::cout << mask << ": (" << ret_point.x << ", " << ret_point.y << ")" << std::endl;
+    }
+
+    // cv::Mat Mask(image.size, image.type);
+    // GenerateMask(mask, Mask)
+    cvDestroyWindow("Select a Lobe");
+    return image;
 }
 
-void Fourier::DrawSquare( int x, int y, int size, cv::Mat image){
-    cv::Rect rec( x-50, y-50, 100, 100);
-    cv::rectangle(image, rec, cv::Scalar(0));
+cv::Mat Fourier::DrawSquare(cv::Point sel_point, int size, cv::Mat image){
+    cv::Mat image_copy;
+    image.copyTo(image_copy);
+
+    // Validate the dimensions
+    int x, y;
+    x = sel_point.x-size/2;
+    y = sel_point.y-size/2;
+
+    if( x<0 )
+        x = 0;
+    if( y<0 )
+        y = 0;
+    if( x+size > image.cols )
+        x = image.cols - size;
+    if( y+size > image.rows )
+        y = image.rows - size;
+
+    cv::Rect rec( x, y, size, size);
+    cv::rectangle(image_copy, rec, cv::Scalar(0));
+    return image_copy;
+}
+
+cv::Mat Fourier::DrawSquare( int xp, int yp, int size, cv::Mat image){
+    cv::Mat image_copy;
+    image.copyTo(image_copy);
+
+    // Validate the dimensions
+    int x, y;
+    x = xp-size/2;
+    y = yp-size/2;
+
+    if( x<0 )
+        x = 0;
+    if( y<0 )
+        y = 0;
+    if( x+size > image.cols )
+        x = image.cols - size;
+    if( y+size > image.rows )
+        y = image.rows - size;
+
+    cv::Rect rec( x, y, size, size);
+    cv::rectangle(image_copy, rec, cv::Scalar(0));
+    return image_copy;
 }
 
 
