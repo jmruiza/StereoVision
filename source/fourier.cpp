@@ -3,14 +3,18 @@
 
 // Control mouse events
 void mouseEvent(int evt, int x, int y, int flags, void* param){
+    cv::Point* sel_point = (cv::Point*) param;
+
     // Push Down Left Button
     if(evt==CV_EVENT_LBUTTONDOWN){
-        std::cout << "(" << x << ", " << y << ")" << std::endl;
+        sel_point->x = x;
+        sel_point->y = y;
     }
 
     // CV_EVENT_MOUSEMOVE
     if(evt==CV_EVENT_MOUSEMOVE){
-        std::cout << "(" << x << ", " << y << ")" << std::endl;
+        sel_point->x = x;
+        sel_point->y = y;
     }
 
 
@@ -161,7 +165,9 @@ cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
 }
 
 void Fourier::ControlEventMouse( char* nameOfWindow ){
-    cvSetMouseCallback(nameOfWindow, mouseEvent, 0);
+    cv::Point sel_point;
+    cvSetMouseCallback(nameOfWindow, mouseEvent, (void*)(&sel_point));
+    std::cout << sel_point << std::endl;
 }
 
 void Fourier::DrawSquare( int x, int y, int size, cv::Mat image){
