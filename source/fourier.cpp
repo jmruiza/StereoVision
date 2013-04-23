@@ -164,12 +164,13 @@ cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
     return out;
 }
 
-cv::Mat Fourier::LobeFilter(cv::Mat image, int mask){
+cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     cv::Mat image_copy;
     image.copyTo(image_copy);
 
     // Returned Point
     cv::Point ret_point;
+
     // Window to selection
     cv::namedWindow("Select a Lobe");
 
@@ -178,15 +179,21 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask){
 
     // Until dont press key Enter
     while(cv::waitKey(100) != 13){
-        image_copy = DrawSquare(ret_point, 100, image);
+        // Show selected area
+        image_copy = DrawSquare(ret_point, 200, image);
         cv::imshow("Select a Lobe", image_copy);
-        // Print the returned point
-        std::cout << mask << ": (" << ret_point.x << ", " << ret_point.y << ")" << std::endl;
     }
+    // Destroy the window "Select a Lobe"
+    cv::destroyWindow("Select a Lobe");
 
+    // Generate a Mask
+    cv::Mat mask(image.size(), image.type());
+    GenerateMask(mask_type, 200, ret_point, mask);
+    cv::imshow("Mask", mask);
     // cv::Mat Mask(image.size, image.type);
     // GenerateMask(mask, Mask)
-    cvDestroyWindow("Select a Lobe");
+
+    cv::waitKey();
     return image;
 }
 
@@ -234,6 +241,35 @@ cv::Mat Fourier::DrawSquare( int xp, int yp, int size, cv::Mat image){
     cv::Rect rec( x, y, size, size);
     cv::rectangle(image_copy, rec, cv::Scalar(0));
     return image_copy;
+}
+
+void Fourier::GenerateMask(int type, int size, cv::Point sel_point, cv::Mat& mask){
+    mask = cv::Mat::zeros(mask.rows, mask.cols,mask.type());
+
+    // Validate the dimensions
+    int x, y;
+    x = sel_point.x-size/2;
+    y = sel_point.y-size/2;
+
+    if( x<0 )
+        x = 0;
+    if( y<0 )
+        y = 0;
+    if( x+size > mask.cols )
+        x = mask.cols - size;
+    if( y+size > mask.rows )
+        y = mask.rows - size;
+
+    // Define image ROI
+    cv::Mat imageROI;
+    imageROI = mask(cv::Rect(x, y, size, size));
+    //cv::Mat image = cv::Mat::ones(imageROI.rows, mask.cols, imageROI.type());
+    imageROI += 1;
+}
+
+void Fourier::GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask){
+
+
 }
 
 

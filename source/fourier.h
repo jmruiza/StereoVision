@@ -49,7 +49,7 @@ public:
      @param image
      @param mask type
      */
-    cv::Mat LobeFilter( cv::Mat image, int mask);
+    cv::Mat LobeFilter( cv::Mat image, int mask_type);
 
     /**
     Draw a square in image
@@ -59,7 +59,7 @@ public:
     @param[cv::Mat] image
     @author Juan Manuel Ruiz
     */
-    cv::Mat  DrawSquare( int x, int y, int size, cv::Mat image);
+    cv::Mat DrawSquare( int x, int y, int size, cv::Mat image);
 
     /**
     Draw a square in image
@@ -68,7 +68,11 @@ public:
     @param[cv::Mat] image
     @author Juan Manuel Ruiz
     */
-    cv::Mat  DrawSquare( cv::Point sel_point, int size, cv::Mat image);
+    cv::Mat DrawSquare( cv::Point sel_point, int size, cv::Mat image);
+
+    void GenerateMask(int type, int size, cv::Point sel_point, cv::Mat& mask);
+    void GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask);
+
 
     // Getters and Setters
     void set_image_in(cv::Mat image);
