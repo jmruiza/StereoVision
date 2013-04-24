@@ -1,32 +1,25 @@
 #include "fourier.h"
 #include "pdi.h"
-#include "mouse.h"
 
-//void mouseEvent(int evt, int x, int y, int flags, void* param);
+// ==============================================================================================
+// The struct "Mouse" and function "mouseEvent" must be externs to the class
+// ==============================================================================================
+
+// Mouse controller struct
+struct Mouse{
+    int event;
+    int x;
+    int y;
+};
 
 // Control mouse events
 void mouseEvent(int evt, int x, int y, int flags, void* param){
-//    cv::Point* sel_point = (cv::Point*) param;
-
     Mouse* mouse = (Mouse*) param;
     mouse->event = evt;
     mouse->x = x;
     mouse->y = y;
-/*
-    // Push Down Left Button
-    if(evt==CV_EVENT_LBUTTONDOWN){
-        sel_point->x = x;
-        sel_point->y = y;
-    }
-
-    // CV_EVENT_MOUSEMOVE
-    if(evt==CV_EVENT_MOUSEMOVE){
-        sel_point->x = x;
-        sel_point->y = y;
-    }
-*/
-
 }
+// ==============================================================================================
 
 Fourier::Fourier()
 {
@@ -88,8 +81,6 @@ bool Fourier::FourierDFT(bool display){
         imshow("spectrum magnitude", image_out);
         cv::waitKey();
     }
-
-
     return true;
 }
 
@@ -129,7 +120,6 @@ bool Fourier::FourierConvolution(bool display){
         imshow("Output Image", image_out);
         cv::waitKey();
     }
-
     return true;
 }
 
@@ -168,37 +158,33 @@ cv::Mat Fourier::FFTShift(cv::Mat image, bool display){
         cv::imshow("Image In", image);
         cv::imshow("Image Out", out);
     }
-
     return out;
 }
 
 cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
+    // Make a copy of the image to work
     cv::Mat image_copy;
     image.copyTo(image_copy);
 
     // Mouse control object
     Mouse mouse;
 
-    //cv::Point ret_point;
-
     // Window to selection
     cv::namedWindow("Select a Lobe");
 
     // Event Mouse controller
-    //cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&ret_point));
     cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&mouse));
 
-    // Until dont press key Enter
-    //while(cv::waitKey(100) != 13){
     while(cv::waitKey(1)){
         // Show selected area
-        //image_copy = DrawSquare(ret_point, 200, image);
         image_copy = DrawSquare(mouse.x, mouse.y, 200, image);
         cv::imshow("Select a Lobe", image_copy);
 
+        // Until dont press mouse left key
         if(mouse.event == 1)
             break;
     }
+
     // Destroy the window "Select a Lobe"
     cv::destroyWindow("Select a Lobe");
 
@@ -211,6 +197,7 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
 
     cv::imshow("Mask", mask);
     cv::waitKey();
+    cv::destroyWindow("Mask");
     return image;
 }
 

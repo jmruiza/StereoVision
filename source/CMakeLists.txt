@@ -20,7 +20,6 @@ set(Stereo_SRC
     main.cpp
     stereovision.cpp
 
-    mouse.h
     camera.cpp
     harrisDetector.h
     fourier.cpp
