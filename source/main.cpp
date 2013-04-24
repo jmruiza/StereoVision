@@ -10,32 +10,32 @@ using namespace cv;
 
 int main(){
     Fourier fourier;
-    Mat imageLeft;
-    Mat imageRight;
+    Mat imageLeft, imageF_Left;
+    Mat imageRight, imageF_Right;
 
     // Reading Images
     imageLeft = imread("../../resources/images/face01-Left.jpg", 0);
     imageRight = imread("../../resources/images/face01-Right.jpg", 0);
 
-    // Processing Left Image
-    fourier.set_image_in(imageLeft);
+    fourier.FourierDFT(imageLeft, imageF_Left);
+    fourier.FFTShift(imageF_Left, imageF_Left);
+    fourier.LobeFilter(imageF_Left, 0);
+    fourier.FFTShift(imageF_Left, imageF_Left);
+    fourier.FourierDFTInverse(imageF_Left, imageF_Left);
 
-    // Fourier DFT
-    fourier.FourierDFT();
-    Mat imageLeft_Fourier = fourier.get_image_out();
-    imageLeft_Fourier = fourier.LobeFilter(imageLeft_Fourier,0);
-    imageLeft_Fourier = fourier.FFTShift(imageLeft_Fourier);
-    imageLeft_Fourier = fourier.FourierInverseDFT(imageLeft_Fourier);
+    //fourier.FourierDFT();
+    //imageLeft_Fourier = fourier.LobeFilter(imageLeft_Fourier,0);
+    //imageLeft_Fourier = fourier.FFTShift(imageLeft_Fourier);
+    //imageLeft_Fourier = fourier.FourierInverseDFT(imageLeft_Fourier);
 
     // Display images
     namedWindow("Left Image");
     namedWindow("Left Image Fourier");
-
-    moveWindow("Left Image", 0, 0);
-    moveWindow("Left Image Fourier", 700, 0);
+    moveWindow("Left Image", 50, 50);
+    moveWindow("Left Image Fourier", 700, 50);
 
     imshow("Left Image",imageLeft);
-    imshow("Left Image Fourier", imageLeft_Fourier);
+    imshow("Left Image Fourier", imageF_Left);
     waitKey();
 
 /*

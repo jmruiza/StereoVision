@@ -6,8 +6,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-class Fourier
-{
+class Fourier{
+
 public:     
     /**
     Constructor (single)
@@ -16,37 +16,50 @@ public:
     Fourier();
 
     /**
-    Compute the Discrete Fourier Transform and show it
-    @param[in] display (true/false) the initial and final images
+    Compute the Discrete Fourier Transform
+    @param[in] image source
+    @param[in] image destination
+    @param[out] Fourier Transform of image source
     @author Juan Manuel Ruiz
-    */
-    bool FourierDFT(bool display=false);
+   */
+    void FourierDFT(const cv::Mat image_src, cv::Mat& image_dst);
 
     /**
-    Compute the Convolution Fourier Transform and show it
-    @param[in] display (true/false) the initial and final images
+    Compute the Inverse Fourier Transform
+    @param[in] image source
+    @param[in] image destination
+    @param[out] Inverse Fourier Transform of image source
     @author Juan Manuel Ruiz
     */
-    bool FourierConvolution(bool display=false);
+    void FourierDFTInverse(const cv::Mat image_src, cv::Mat& image_dst);
 
     /**
-    Compute the Inverse Fourier Transform and show it
-    @param[in] Display (true/false) the initial and final images
+    Compute the Convolution Fourier Transform
+    @param[in] image source
+    @param[in] image destination
+    @param[out] Fourier Transform of image source
     @author Juan Manuel Ruiz
     */
-    cv::Mat FourierInverseDFT(cv::Mat image);
+    void FourierConvolution(const cv::Mat image_src, cv::Mat& image_dst);
 
     /**
-    Rearrange the image
-    @param[in] Display (true/false) the initial and final images
+    Rearrange the quadrants of Fourier image  so that the origin is at the image center
+    @param[in] image source
+    @param[in] image destination
+    @param[out] Rearrange image source
     @author Juan Manuel Ruiz
     */
-    cv::Mat FFTShift(cv::Mat image, bool display=false);
+    void FFTShift(const cv::Mat image_src, cv::Mat& image_dst);
 
     /**
-     LobeFilter
-     @param image
-     @param mask type
+    LobeFilter
+    @param[in] image source
+    @param[in] Mask type:
+               0 - Rectangular
+               1 - Circular
+               2 - Gaussian
+    @param[out] Image with lobe filtered
+    @author Juan Manuel Ruiz
      */
     cv::Mat LobeFilter( cv::Mat image, int mask_type);
 
@@ -55,33 +68,15 @@ public:
     @param[in] x coordinate of center of square
     @param[in] y coordinate of center of square
     @param[in] Size of square
-    @param[cv::Mat] image
+    @param[out] image
     @author Juan Manuel Ruiz
     */
     cv::Mat DrawSquare( int x, int y, int size, cv::Mat image);
 
-    /**
-    Draw a square in image
-    @param[cv::Point] coordinate of center of square
-    @param[in] Size of square
-    @param[cv::Mat] image
-    @author Juan Manuel Ruiz
-    */
-    cv::Mat DrawSquare( cv::Point sel_point, int size, cv::Mat image);
-
-    void GenerateMask(int type, int size, cv::Point sel_point, cv::Mat& mask);
     void GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask);
 
-
-    // Getters and Setters
-    void set_image_in(cv::Mat image);
-    void set_image_out(cv::Mat image);
-    cv::Mat get_image_in();
-    cv::Mat get_image_out();
-
 private:
-    cv::Mat image_in;
-    cv::Mat image_out;
+
 };
 
 #endif // FOURIER_H
