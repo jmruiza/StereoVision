@@ -193,11 +193,16 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     //GenerateMask(mask_type, 200, ret_point, mask);
     GenerateMask(mask_type, 200, mouse.x, mouse.y, mask);
 
-
-
     cv::imshow("Mask", mask);
     cv::waitKey();
     cv::destroyWindow("Mask");
+
+    cv::multiply(image,mask,image);
+
+    cv::imshow("image", image);
+    cv::waitKey();
+    cv::destroyWindow("image");
+
     return image;
 }
 
