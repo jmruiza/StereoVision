@@ -1,10 +1,23 @@
 #include "fourier.h"
 #include "pdi.h"
 
+//void mouseEvent(int evt, int x, int y, int flags, void* param);
+
+struct Mouse{
+    int event;
+    int x;
+    int y;
+};
+
 // Control mouse events
 void mouseEvent(int evt, int x, int y, int flags, void* param){
-    cv::Point* sel_point = (cv::Point*) param;
+//    cv::Point* sel_point = (cv::Point*) param;
 
+    Mouse* mouse = (Mouse*) param;
+    mouse->event = evt;
+    mouse->x = x;
+    mouse->y = y;
+/*
     // Push Down Left Button
     if(evt==CV_EVENT_LBUTTONDOWN){
         sel_point->x = x;
@@ -16,7 +29,7 @@ void mouseEvent(int evt, int x, int y, int flags, void* param){
         sel_point->x = x;
         sel_point->y = y;
     }
-
+*/
 
 }
 
@@ -168,19 +181,23 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     cv::Mat image_copy;
     image.copyTo(image_copy);
 
-    // Returned Point
-    cv::Point ret_point;
+    // Mouse control Struct
+    Mouse mouse;
+    //cv::Point ret_point;
 
     // Window to selection
     cv::namedWindow("Select a Lobe");
 
     // Event Mouse controller
-    cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&ret_point));
+    //cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&ret_point));
+    cvSetMouseCallback("Select a Lobe", mouseEvent, (void*)(&mouse));
 
     // Until dont press key Enter
-    while(cv::waitKey(100) != 13){
+    //while(cv::waitKey(100) != 13){
+    while(mouse.event != CV_EVENT_LBUTTONDOWN){
         // Show selected area
-        image_copy = DrawSquare(ret_point, 200, image);
+        //image_copy = DrawSquare(ret_point, 200, image);
+        image_copy = DrawSquare(mouse.x, mouse.y, 200, image);
         cv::imshow("Select a Lobe", image_copy);
     }
     // Destroy the window "Select a Lobe"
@@ -188,11 +205,12 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
 
     // Generate a Mask
     cv::Mat mask(image.size(), image.type());
-    GenerateMask(mask_type, 200, ret_point, mask);
-    cv::imshow("Mask", mask);
-    // cv::Mat Mask(image.size, image.type);
-    // GenerateMask(mask, Mask)
+    //GenerateMask(mask_type, 200, ret_point, mask);
+    GenerateMask(mask_type, 200, mouse.x, mouse.y, mask);
 
+
+
+    cv::imshow("Mask", mask);
     cv::waitKey();
     return image;
 }
@@ -268,8 +286,27 @@ void Fourier::GenerateMask(int type, int size, cv::Point sel_point, cv::Mat& mas
 }
 
 void Fourier::GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask){
+    mask = cv::Mat::zeros(mask.rows, mask.cols,mask.type());
 
+    // Validate the dimensions
+    int x, y;
+    x = xp-size/2;
+    y = yp-size/2;
 
+    if( x<0 )
+        x = 0;
+    if( y<0 )
+        y = 0;
+    if( x+size > mask.cols )
+        x = mask.cols - size;
+    if( y+size > mask.rows )
+        y = mask.rows - size;
+
+    // Define image ROI
+    cv::Mat imageROI;
+    imageROI = mask(cv::Rect(x, y, size, size));
+    //cv::Mat image = cv::Mat::ones(imageROI.rows, mask.cols, imageROI.type());
+    imageROI += 1;
 }
 
 
