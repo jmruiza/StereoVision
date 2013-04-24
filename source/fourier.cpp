@@ -84,6 +84,54 @@ bool Fourier::FourierDFT(bool display){
     return true;
 }
 
+cv::Mat Fourier::FourierInverseDFT(cv::Mat image){
+    if(image.empty()){
+        return image;
+    }
+
+    // 1. Expand input image to optimal size
+    cv::Mat padded;
+    // Get the optimal size to DFT
+    int m = cv::getOptimalDFTSize( image.rows );
+    int n = cv::getOptimalDFTSize( image.cols );
+    // Add zero values to the border
+    cv::copyMakeBorder(image,               // Input
+                       padded,              // Output
+                       0,                   // Top
+                       m - image.rows,      // Bottom
+                       0,                   // Left
+                       n - image.cols,      // Right
+                       cv::BORDER_CONSTANT, // Border type
+                       cv::Scalar::all(0)); // Value
+
+    // 2. Make place for both the complex and the real values.
+    cv::Mat planes[] = { cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F) };
+    cv::Mat complexI;
+
+    // Add the expanded image and a plane with zeros a complexI
+    cv::merge(planes, 2, complexI);
+
+    // 3. Discrete Fourier transform
+    cv::dft(complexI, complexI, cv::DFT_INVERSE);
+
+    // 4. Compute the magnitude -> sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
+    cv::split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
+    magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
+    cv::Mat magI = planes[0];
+
+    // 5. Switch to logarithmic scale -> log(1 + Magnitude)
+    magI += cv::Scalar::all(1);
+    cv::log(magI, magI);
+    // Crop the spectrum, if it has an odd number of rows or columns
+    magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
+
+    cv::Mat im;
+    // Normalize the spectrum
+    cv::normalize(magI, im, 0, 1, CV_MINMAX);
+
+    return im;
+}
+
 bool Fourier::FourierConvolution(bool display){
     if(image_in.empty()){
         return false;
@@ -192,17 +240,8 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     cv::Mat mask(image.size(), image.type());
     //GenerateMask(mask_type, 200, ret_point, mask);
     GenerateMask(mask_type, 200, mouse.x, mouse.y, mask);
-
-    cv::imshow("Mask", mask);
-    cv::waitKey();
-    cv::destroyWindow("Mask");
-
+    // Multiply image and filter (Mask)
     cv::multiply(image,mask,image);
-
-    cv::imshow("image", image);
-    cv::waitKey();
-    cv::destroyWindow("image");
-
     return image;
 }
 

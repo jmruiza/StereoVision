@@ -34,7 +34,7 @@ public:
     @param[in] Display (true/false) the initial and final images
     @author Juan Manuel Ruiz
     */
-    cv::Mat FourierInverse(cv::Mat image, bool display=false);
+    cv::Mat FourierInverseDFT(cv::Mat image);
 
     /**
     Rearrange the image

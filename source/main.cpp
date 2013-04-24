@@ -10,9 +10,6 @@ using namespace cv;
 
 int main(){
     Fourier fourier;
-
-
-
     Mat imageLeft;
     Mat imageRight;
 
@@ -27,6 +24,8 @@ int main(){
     fourier.FourierDFT();
     Mat imageLeft_Fourier = fourier.get_image_out();
     imageLeft_Fourier = fourier.LobeFilter(imageLeft_Fourier,0);
+    imageLeft_Fourier = fourier.FFTShift(imageLeft_Fourier);
+    imageLeft_Fourier = fourier.FourierInverseDFT(imageLeft_Fourier);
 
     // Display images
     namedWindow("Left Image");
@@ -37,10 +36,6 @@ int main(){
 
     imshow("Left Image",imageLeft);
     imshow("Left Image Fourier", imageLeft_Fourier);
-
-
-
-
     waitKey();
 
 /*
