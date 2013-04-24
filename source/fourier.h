@@ -58,10 +58,11 @@ public:
                0 - Rectangular
                1 - Circular
                2 - Gaussian
+    @param[in] Size of sides(Rectangle) or radius(circle/Gaussian)
     @param[out] Image with lobe filtered
     @author Juan Manuel Ruiz
      */
-    cv::Mat LobeFilter( cv::Mat image, int mask_type);
+    cv::Mat LobeFilter( cv::Mat image, int mask_type, int mask_size);
 
     /**
     Draw a square in image
@@ -73,8 +74,33 @@ public:
     */
     cv::Mat DrawSquare( int x, int y, int size, cv::Mat image);
 
-    void GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask);
+    cv::Mat DrawCircle( int xc, int yc, int size, cv::Mat image);
 
+    /**
+    Generate a mask
+    @param[in] Mask type:
+               0 - Rectangular
+               1 - Circular
+               2 - Gaussian
+    @param[in] Size of sides(Rectangle) or radius(circle/Gaussian)
+    @param[in] x coordinate of center point
+    @param[in] y coordinate of center point
+    @param[out] Mask image
+    @author Juan Manuel Ruiz
+    */
+    void GenerateMask(int mask_type, int size, int xc, int yc, cv::Mat& mask);
+
+    /**
+    Validate the data to create the mask and show the lobe selector
+    @param[in] x coordinate of center point
+    @param[in] y coordinate of center point
+    @param[in] x coordinate of superior corner
+    @param[in] y coordinate of superior corner
+    @param[in] Size of sides(Rectangle) or radius(circle/Gaussian)
+    @param[in] Mask image
+    @author Juan Manuel Ruiz
+    */
+    void validateDimensions(int xc, int yc, int& x, int& y, int size, const cv::Mat image);
 private:
 
 };

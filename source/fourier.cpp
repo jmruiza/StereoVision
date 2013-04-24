@@ -66,8 +66,10 @@ void Fourier::FourierDFT(const cv::Mat image_src, cv::Mat &image_dst){
     // Crop the spectrum, if it has an odd number of rows or columns
     magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
 
+    magI.copyTo(image_dst);
+
     // Normalize the spectrum
-    cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
+    //cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
 }
 
 void Fourier::FourierDFTInverse(const cv::Mat image_src, cv::Mat& image_dst){
@@ -112,8 +114,9 @@ void Fourier::FourierDFTInverse(const cv::Mat image_src, cv::Mat& image_dst){
     // Crop the spectrum, if it has an odd number of rows or columns
     magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
 
+    magI.copyTo(image_dst);
     // Normalize the spectrum
-    cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
+    // cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
 }
 
 void Fourier::FourierConvolution(const cv::Mat image_src, cv::Mat& image_dst){
@@ -144,8 +147,9 @@ void Fourier::FourierConvolution(const cv::Mat image_src, cv::Mat& image_dst){
         }
     }
 
+    f.copyTo(image_dst);
     // Normalize image
-    cv::normalize(f, image_dst, 0, 1, CV_MINMAX);
+    //cv::normalize(f, image_dst, 0, 1, CV_MINMAX);
 }
 
 void Fourier::FFTShift(const cv::Mat image_src, cv::Mat& image_dst){
@@ -172,10 +176,10 @@ void Fourier::FFTShift(const cv::Mat image_src, cv::Mat& image_dst){
     q2.copyTo(q1);
     tmp.copyTo(q2);
 
-    cv::normalize(image_dst, image_dst, 0, 1, CV_MINMAX);
+    //cv::normalize(image_dst, image_dst, 0, 1, CV_MINMAX);
 }
 
-cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
+cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type, int mask_size){
     // Make a copy of the image to work
     cv::Mat image_copy;
     image.copyTo(image_copy);
@@ -192,7 +196,20 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
 
     while(cv::waitKey(1)){
         // Show selected area
-        image_copy = DrawSquare(mouse.x, mouse.y, 300, image);
+        switch(mask_type){
+            case 0:
+                image_copy = DrawSquare(mouse.x, mouse.y, mask_size, image);
+                break;
+            case 1:
+                image_copy = DrawCircle(mouse.x, mouse.y, mask_size, image);
+                break;
+            case 2:
+                image_copy = DrawCircle(mouse.x, mouse.y, mask_size, image);
+                break;
+            default:
+                break;
+        }
+        cv::normalize(image_copy, image_copy, 0, 1, CV_MINMAX);
         cv::imshow("Select a Lobe", image_copy);
 
         // Until dont press mouse left key
@@ -212,14 +229,89 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     return image;
 }
 
-cv::Mat Fourier::DrawSquare( int xp, int yp, int size, cv::Mat image){
+cv::Mat Fourier::DrawSquare( int xc, int yc, int size, cv::Mat image){
     cv::Mat image_copy;
     image.copyTo(image_copy);
 
     // Validate the dimensions
     int x, y;
-    x = xp-size/2;
-    y = yp-size/2;
+    validateDimensions(xc, yc, x, y, size, image);
+
+    cv::Rect rec( x, y, size, size);
+    cv::rectangle(image_copy, rec, cv::Scalar(0));
+    return image_copy;
+}
+
+cv::Mat Fourier::DrawCircle( int xc, int yc, int size, cv::Mat image){
+    cv::Mat image_copy;
+    image.copyTo(image_copy);
+
+    // Validate the dimensions
+    int x, y;
+    validateDimensions(xc, yc, x, y, size, image);
+    //cv::Point
+
+    cv::circle(image_copy, cv::Point(x+size/2,y+size/2), size/2, cv::Scalar(0));
+    return image_copy;
+}
+
+void Fourier::GenerateMask(int mask_type, int size, int xc, int yc, cv::Mat& mask){
+    mask = cv::Mat::zeros(mask.rows, mask.cols,mask.type());
+    // Validate the dimensions
+    int x, y;
+    validateDimensions(xc, yc, x, y, size, mask);
+    // Define image ROI
+    cv::Mat imageROI;
+    imageROI = mask(cv::Rect(x, y, size, size));
+
+    // Show selected area
+    switch(mask_type){
+        case 0:
+            imageROI = 1;
+            break;
+
+        case 1:
+            cv::circle(imageROI, cv::Point(size/2, size/2), size/2, cv::Scalar(1),-1);
+            break;
+
+        case 2:{
+            PDI pdi;
+            int sigma = size/6;
+            cv::Mat gaussian = pdi.gaussianImage(sigma);
+
+            cv::normalize(gaussian, gaussian, 0, 1, CV_MINMAX);
+
+            for(int j=0; j<imageROI.rows; j++){
+                for(int i=0; i<imageROI.cols; i++){
+                    imageROI.at<double>(j,i) = 1; //gaussian.at<double>(j,i);
+                }
+            }
+
+
+            double gmin, gmax, imin, imax;
+            pdi.getImageRangeDouble(gaussian, gmin, gmax);
+            pdi.getImageRangeDouble(imageROI, imin, imax);
+            std::cout << gaussian.type() << " = " << imageROI.type() << std::endl;
+            std::cout << gaussian.rows << " x " << gaussian.cols << " = "
+                      << imageROI.rows << " x " << imageROI.cols << std::endl;
+            std::cout << gmin << " - " << gmax << " = "
+                      << imin << " - " << imax << std::endl;
+            imshow("gaussian",gaussian);
+            break;
+        }
+        default:
+            break;
+    }
+
+    cv::normalize(mask, mask, 0, 1, CV_MINMAX);
+    imshow("Mask",mask);
+    cv::waitKey();
+}
+
+void Fourier::validateDimensions(int xc, int yc, int& x, int& y, int size, const cv::Mat image){
+    // Validate the dimensions
+    x = xc-size/2;
+    y = yc-size/2;
 
     if( x<0 )
         x = 0;
@@ -229,32 +321,4 @@ cv::Mat Fourier::DrawSquare( int xp, int yp, int size, cv::Mat image){
         x = image.cols - size;
     if( y+size > image.rows )
         y = image.rows - size;
-
-    cv::Rect rec( x, y, size, size);
-    cv::rectangle(image_copy, rec, cv::Scalar(0));
-    return image_copy;
-}
-
-void Fourier::GenerateMask(int type, int size, int xp, int yp, cv::Mat& mask){
-    mask = cv::Mat::zeros(mask.rows, mask.cols,mask.type());
-
-    // Validate the dimensions
-    int x, y;
-    x = xp-size/2;
-    y = yp-size/2;
-
-    if( x<0 )
-        x = 0;
-    if( y<0 )
-        y = 0;
-    if( x+size > mask.cols )
-        x = mask.cols - size;
-    if( y+size > mask.rows )
-        y = mask.rows - size;
-
-    // Define image ROI
-    cv::Mat imageROI;
-    imageROI = mask(cv::Rect(x, y, size, size));
-    //cv::Mat image = cv::Mat::ones(imageROI.rows, mask.cols, imageROI.type());
-    imageROI += 1;
 }

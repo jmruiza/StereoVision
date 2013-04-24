@@ -19,7 +19,7 @@ int main(){
 
     fourier.FourierDFT(imageLeft, imageF_Left);
     fourier.FFTShift(imageF_Left, imageF_Left);
-    fourier.LobeFilter(imageF_Left, 0);
+    fourier.LobeFilter(imageF_Left, 2, 150);
     fourier.FFTShift(imageF_Left, imageF_Left);
     fourier.FourierDFTInverse(imageF_Left, imageF_Left);
 
@@ -34,6 +34,7 @@ int main(){
     moveWindow("Left Image", 50, 50);
     moveWindow("Left Image Fourier", 700, 50);
 
+    cv::normalize(imageF_Left, imageF_Left, 0, 1, CV_MINMAX);
     imshow("Left Image",imageLeft);
     imshow("Left Image Fourier", imageF_Left);
     waitKey();
