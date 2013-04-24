@@ -1,13 +1,8 @@
 #include "fourier.h"
 #include "pdi.h"
+#include "mouse.h"
 
 //void mouseEvent(int evt, int x, int y, int flags, void* param);
-
-struct Mouse{
-    int event;
-    int x;
-    int y;
-};
 
 // Control mouse events
 void mouseEvent(int evt, int x, int y, int flags, void* param){
@@ -181,8 +176,9 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
     cv::Mat image_copy;
     image.copyTo(image_copy);
 
-    // Mouse control Struct
+    // Mouse control object
     Mouse mouse;
+
     //cv::Point ret_point;
 
     // Window to selection
@@ -194,11 +190,14 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type){
 
     // Until dont press key Enter
     //while(cv::waitKey(100) != 13){
-    while(mouse.event != CV_EVENT_LBUTTONDOWN){
+    while(cv::waitKey(1)){
         // Show selected area
         //image_copy = DrawSquare(ret_point, 200, image);
         image_copy = DrawSquare(mouse.x, mouse.y, 200, image);
         cv::imshow("Select a Lobe", image_copy);
+
+        if(mouse.event == 1)
+            break;
     }
     // Destroy the window "Select a Lobe"
     cv::destroyWindow("Select a Lobe");

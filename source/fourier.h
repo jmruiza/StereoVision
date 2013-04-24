@@ -8,8 +8,7 @@
 
 class Fourier
 {
-public:
-
+public:     
     /**
     Constructor (single)
     @author Juan Manuel Ruiz
