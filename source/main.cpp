@@ -19,7 +19,7 @@ int main(){
 
     fourier.FourierDFT(imageLeft, imageF_Left);
     fourier.FFTShift(imageF_Left, imageF_Left);
-    fourier.LobeFilter(imageF_Left, 2, 150);
+    fourier.LobeFilter(imageF_Left, 0, 150);
     fourier.FFTShift(imageF_Left, imageF_Left);
     fourier.FourierDFTInverse(imageF_Left, imageF_Left);
 

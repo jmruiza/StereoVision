@@ -256,7 +256,7 @@ cv::Mat Fourier::DrawCircle( int xc, int yc, int size, cv::Mat image){
 }
 
 void Fourier::GenerateMask(int mask_type, int size, int xc, int yc, cv::Mat& mask){
-    mask = cv::Mat::zeros(mask.rows, mask.cols, CV_64F);
+    mask = cv::Mat::zeros(mask.rows, mask.cols, CV_32F);
     // Validate the dimensions
     int x, y;
     validateDimensions(xc, yc, x, y, size, mask);
@@ -283,22 +283,11 @@ void Fourier::GenerateMask(int mask_type, int size, int xc, int yc, cv::Mat& mas
 
             for(int j=0; j<imageROI.rows; j++){
                 for(int i=0; i<imageROI.cols; i++){
-                    imageROI.at<double>(j,i) = gaussian.at<double>(j,i);
+                    imageROI.at<float>(j,i) = static_cast<float>( gaussian.at<double>(j,i) );
                 }
             }
-
-
-            double gmin, gmax, imin, imax;
-            pdi.getImageRangeDouble(gaussian, gmin, gmax);
-            pdi.getImageRangeDouble(imageROI, imin, imax);
-            std::cout << gaussian.type() << " = " << imageROI.type() << std::endl;
-            std::cout << gaussian.rows << " x " << gaussian.cols << " = "
-                      << imageROI.rows << " x " << imageROI.cols << std::endl;
-            std::cout << gmin << " - " << gmax << " = "
-                      << imin << " - " << imax << std::endl;
-            std::cout << gaussian.channels() << " - " << imageROI.channels() << std::endl;
-            imshow("gaussian",gaussian);
             break;
+
         }
         default:
             break;
