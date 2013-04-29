@@ -25,19 +25,13 @@ Fourier::Fourier()
 {
 }
 
-void Fourier::FourierDFT(const cv::Mat image_src, cv::Mat &image_dst){
-    if(image_src.empty()){
-        image_src.copyTo(image_dst);
-        return;
-    }
-
-    // 1. Expand input image to optimal size
+std::vector<cv::Mat_<float> > Fourier::FourierDFT(const cv::Mat image_src){
+    // 1. Expand input image to optimal size to DFT (Adding zero values to border)
     cv::Mat padded;
-    // Get the optimal size to DFT
     int m = cv::getOptimalDFTSize( image_src.rows );
-    int n = cv::getOptimalDFTSize( image_src.cols );
-    // Add zero values to the border
-    cv::copyMakeBorder(image_src,               // Input
+    int n = cv::getOptimalDFTSize( image_src.cols );    
+    cv::copyMakeBorder( // Add zero values to the border
+                       image_src,               // Input
                        padded,                  // Output
                        0,                       // Top
                        m - image_src.rows,      // Bottom
@@ -47,7 +41,7 @@ void Fourier::FourierDFT(const cv::Mat image_src, cv::Mat &image_dst){
                        cv::Scalar::all(0));     // Value
 
     // 2. Make place for both the complex and the real values.
-    cv::Mat planes[] = { cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F) };
+    cv::Mat_<float> planes[] = { cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size()) };
     cv::Mat complexI;
     // Add the expanded image and a plane with zeros a complexI
     cv::merge(planes, 2, complexI);
@@ -55,68 +49,71 @@ void Fourier::FourierDFT(const cv::Mat image_src, cv::Mat &image_dst){
     // 3. Discrete Fourier transform
     cv::dft(complexI, complexI);
 
-    // 4. Compute the magnitude -> sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
-    cv::split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
-    magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
-    cv::Mat magI = planes[0];
+    // 4. Separate data
+    // planes[0] = Re(DFT(I)
+    // planes[1] = Im(DFT(I))
+    cv::split(complexI, planes);
 
-    // 5. Switch to logarithmic scale -> log(1 + Magnitude)
-    magI += cv::Scalar::all(1);
-    cv::log(magI, magI);
-    // Crop the spectrum, if it has an odd number of rows or columns
-    magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
+    // 5. Crop the spectrum data
+    // planes[0] = planes[0] (cv::Rect(0,0, planes[0].cols & -2, planes[0].rows & -2));
+    // planes[1] = planes[1] (cv::Rect(0,0, planes[1].cols & -2, planes[1].rows & -2));
 
-    magI.copyTo(image_dst);
+    // 6. Returned vector
+    std::vector<cv::Mat_<float> > output;
+    output.push_back(planes[0]);
+    output.push_back(planes[1]);
 
-    // Normalize the spectrum
-    //cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
+    return output;
 }
 
-void Fourier::FourierDFTInverse(const cv::Mat image_src, cv::Mat& image_dst){
-    if(image_src.empty()){
-        image_src.copyTo(image_dst);
-        return;
-    }
+std::vector<cv::Mat_<float> > Fourier::FourierDFTInverse(std:: vector<cv::Mat_<float> > input){
+    // 1. Expand input image planes to optimal size to DFT (Adding zero values to border)
+    cv::Mat paddedR;
+    cv::Mat paddedI;
+    int m = cv::getOptimalDFTSize(input[0].rows);
+    int n = cv::getOptimalDFTSize(input[0].cols);
+    cv::copyMakeBorder(input[0], paddedR, 0, m-input[0].rows, 0, n-input[0].cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+    cv::copyMakeBorder(input[1], paddedI, 0, m-input[1].rows, 0, n-input[1].cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
 
-    // 1. Expand input image to optimal size
-    cv::Mat padded;
-    // Get the optimal size to DFT
-    int m = cv::getOptimalDFTSize( image_src.rows );
-    int n = cv::getOptimalDFTSize( image_src.cols );
-    // Add zero values to the border
-    cv::copyMakeBorder(image_src,           // Input
-                       padded,              // Output
-                       0,                   // Top
-                       m - image_src.rows,  // Bottom
-                       0,                   // Left
-                       n - image_src.cols,  // Right
-                       cv::BORDER_CONSTANT, // Border type
-                       cv::Scalar::all(0)); // Value
-
-    // 2. Make place for both the complex and the real values.
-    cv::Mat planes[] = { cv::Mat_<float>(padded), cv::Mat::zeros(padded.size(), CV_32F) };
+    // 2. Join the Re(DFT(I) and Im(DFT(I)) in complex image
+    cv::Mat_<float> planes[] ={ paddedR, paddedI };
     cv::Mat complexI;
-
-    // Add the expanded image and a plane with zeros a complexI
     cv::merge(planes, 2, complexI);
 
-    // 3. Discrete Fourier transform
-    cv::dft(complexI, complexI, cv::DFT_INVERSE);
+    // 3. Discrete Fourier Inverse Transform
+    cv:: dft(complexI, complexI, cv::DFT_INVERSE);
+    // 4. Separate data
+    // planes[0] = Re(DFT(I)
+    // planes[1] = Im(DFT(I))
+    cv:: split(complexI, planes);
 
-    // 4. Compute the magnitude -> sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
-    cv::split(complexI, planes);                   // planes[0] = Re(DFT(I), planes[1] = Im(DFT(I))
-    magnitude(planes[0], planes[1], planes[0]);// planes[0] = magnitude
-    cv::Mat magI = planes[0];
+    // 5. Crop the spectrum data
+    planes[0] = planes[0] (cv::Rect(0,0, planes[0].cols & -2, planes[0].rows & -2));
+    planes[1] = planes[1] (cv::Rect(0,0, planes[1].cols & -2, planes[1].rows & -2));
 
-    // 5. Switch to logarithmic scale -> log(1 + Magnitude)
+    // 6. Returned vector
+    std::vector<cv::Mat_<float> > output;
+    output.push_back(planes[0]);
+    output.push_back(planes[1]);
+    return output;
+}
+
+cv::Mat Fourier::getImageMagnitude(std::vector<cv::Mat_<float> > input){
+    // Compute the magnitude
+    // sqrt(Re(DFT(I))^2 + Im(DFT(I))^2)
+    // planes[0] = Re(DFT(I)
+    // planes[1] = Im(DFT(I))
+    cv::Mat magI;
+    magnitude(input[0], input[1], magI);
+
+    // Switch to logarithmic scale -> log(1 + Magnitude)
     magI += cv::Scalar::all(1);
     cv::log(magI, magI);
-    // Crop the spectrum, if it has an odd number of rows or columns
-    magI = magI(cv::Rect(0, 0, magI.cols & -2, magI.rows & -2));
 
-    magI.copyTo(image_dst);
-    // Normalize the spectrum
-    // cv::normalize(magI, image_dst, 0, 1, CV_MINMAX);
+    // Normalize image without Rearrange
+    cv::Mat magI1;
+    cv::normalize(magI, magI1, 0, 1, CV_MINMAX);
+    return magI1;
 }
 
 void Fourier::FourierConvolution(const cv::Mat image_src, cv::Mat& image_dst){
@@ -152,18 +149,22 @@ void Fourier::FourierConvolution(const cv::Mat image_src, cv::Mat& image_dst){
     //cv::normalize(f, image_dst, 0, 1, CV_MINMAX);
 }
 
-void Fourier::FFTShift(const cv::Mat image_src, cv::Mat& image_dst){
-    image_src.copyTo(image_dst);
+void Fourier::FFTShift(std:: vector<cv::Mat_<float> >& input){
+    // FFTShit() to each plane of vector
+    FFTShift(input[0]);
+    FFTShift(input[1]);
+}
 
+void Fourier::FFTShift(cv::Mat& image_src){
     // Rearrange the quadrants of Fourier image so that the origin is at the image center
-    int cx = image_dst.cols/2;
-    int cy = image_dst.rows/2;
+    int cx = image_src.cols/2;
+    int cy = image_src.rows/2;
 
     // Create a ROI per quadrant
-    cv::Mat q0(image_dst, cv::Rect(0, 0, cx, cy));   // Top-Left
-    cv::Mat q1(image_dst, cv::Rect(cx, 0, cx, cy));  // Top-Right
-    cv::Mat q2(image_dst, cv::Rect(0, cy, cx, cy));  // Bottom-Left
-    cv::Mat q3(image_dst, cv::Rect(cx, cy, cx, cy)); // Bottom-Right
+    cv::Mat q0(image_src, cv::Rect(0, 0, cx, cy));   // Top-Left
+    cv::Mat q1(image_src, cv::Rect(cx, 0, cx, cy));  // Top-Right
+    cv::Mat q2(image_src, cv::Rect(0, cy, cx, cy));  // Bottom-Left
+    cv::Mat q3(image_src, cv::Rect(cx, cy, cx, cy)); // Bottom-Right
 
     // swap quadrants (Top-Left with Bottom-Right)
     cv::Mat tmp;
@@ -175,13 +176,12 @@ void Fourier::FFTShift(const cv::Mat image_src, cv::Mat& image_dst){
     q1.copyTo(tmp);
     q2.copyTo(q1);
     tmp.copyTo(q2);
-
-    //cv::normalize(image_dst, image_dst, 0, 1, CV_MINMAX);
 }
 
-cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type, int mask_size){
-    // Make a copy of the image to work
+void Fourier::LobeFilter(std::vector<cv::Mat_<float> > &input, int mask_type, int mask_size){
+    // Get Image Magnitude
     cv::Mat image_copy;
+    cv::Mat image = getImageMagnitude(input);
     image.copyTo(image_copy);
 
     // Mouse control object
@@ -222,11 +222,38 @@ cv::Mat Fourier::LobeFilter(cv::Mat image, int mask_type, int mask_size){
 
     // Generate a Mask
     cv::Mat mask(image.size(), image.type());
-    //GenerateMask(mask_type, 200, ret_point, mask);
-    GenerateMask(mask_type, 200, mouse.x, mouse.y, mask);
+    GenerateMask(mask_type, mask_size, mouse.x, mouse.y, mask);
     // Multiply image and filter (Mask)
-    cv::multiply(image,mask,image);
-    return image;
+    cv::multiply(input[0], mask, input[0]);
+    cv::multiply(input[1], mask, input[1]);
+/*
+    cv::imshow("input[0]", input[0]);
+    cv::imshow("input[1]", input[1]);
+    cv::waitKey();
+*/
+}
+
+cv::Mat Fourier::UnwrappedPhase(std::vector<cv::Mat_<float> >& input){
+    cv::Mat_<float> phase(input[0].rows, input[0].cols);
+
+    for(int i=0; i<phase.rows; i++){
+        for(int j=0; j<phase.cols; j++) {
+            phase(i,j) = atan2( input[1](i,j), input[0](i,j) );
+        }
+    }
+    return phase;
+}
+
+cv::Mat Fourier::PhaseDiference(cv::Mat_<float> phase1, cv::Mat_<float> phase2){
+    cv::Mat_<float> diff(phase1.rows, phase1.cols);
+
+    for(int i=0; i<diff.rows; i++){
+        for(int j=0; j<diff.cols; j++) {
+            diff(i,j) = atan2( sin(phase1(i,j) - phase2(i,j) ),
+                               cos(phase1(i,j) - phase2(i,j) ));
+        }
+    }
+    return diff;
 }
 
 cv::Mat Fourier::DrawSquare( int xc, int yc, int size, cv::Mat image){
@@ -292,10 +319,6 @@ void Fourier::GenerateMask(int mask_type, int size, int xc, int yc, cv::Mat& mas
         default:
             break;
     }
-
-    cv::normalize(mask, mask, 0, 1, CV_MINMAX);
-    imshow("Mask",mask);
-    cv::waitKey();
 }
 
 void Fourier::validateDimensions(int xc, int yc, int& x, int& y, int size, const cv::Mat image){

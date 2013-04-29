@@ -18,20 +18,26 @@ public:
     /**
     Compute the Discrete Fourier Transform
     @param[in] image source
-    @param[in] image destination
-    @param[out] Fourier Transform of image source
+    @param[out] Vector of images with Fourier Transform
     @author Juan Manuel Ruiz
    */
-    void FourierDFT(const cv::Mat image_src, cv::Mat& image_dst);
+    std::vector<cv::Mat_<float> > FourierDFT(const cv::Mat image_src);
 
     /**
     Compute the Inverse Fourier Transform
-    @param[in] image source
-    @param[in] image destination
-    @param[out] Inverse Fourier Transform of image source
+    @param[in] Vector of images with Fourier Transform
+    @param[out] Vector of images with Inverse Fourier Transform
     @author Juan Manuel Ruiz
     */
-    void FourierDFTInverse(const cv::Mat image_src, cv::Mat& image_dst);
+    std::vector<cv::Mat_<float> > FourierDFTInverse(std::vector<cv::Mat_<float> > input);
+
+    /**
+    Get the magnitude image
+    @param[in] Vector of images with Fourier Transform
+    @param[out] magnitude image of spectrum
+    @author Juan Manuel Ruiz
+    */
+    cv::Mat getImageMagnitude(std::vector<cv::Mat_<float> > input);
 
     /**
     Compute the Convolution Fourier Transform
@@ -44,25 +50,36 @@ public:
 
     /**
     Rearrange the quadrants of Fourier image  so that the origin is at the image center
+    @param[in] Vector of images with Fourier Transform
+    @param[out] Vector of images with Rearrange images Fourier's Transform
+    @author Juan Manuel Ruiz
+    */
+    void FFTShift(std::vector<cv::Mat_<float> > &input);
+
+    /**
+    Rearrange the quadrants of Fourier image  so that the origin is at the image center
     @param[in] image source
-    @param[in] image destination
     @param[out] Rearrange image source
     @author Juan Manuel Ruiz
     */
-    void FFTShift(const cv::Mat image_src, cv::Mat& image_dst);
+    void FFTShift(cv::Mat& image_dst);
 
     /**
     LobeFilter
-    @param[in] image source
+    @param[in] Vector of images with Fourier Transform
     @param[in] Mask type:
                0 - Rectangular
                1 - Circular
                2 - Gaussian
     @param[in] Size of sides(Rectangle) or radius(circle/Gaussian)
-    @param[out] Image with lobe filtered
+    @param[out] Vector of images with lobe filtered
     @author Juan Manuel Ruiz
      */
-    cv::Mat LobeFilter( cv::Mat image, int mask_type, int mask_size);
+    void LobeFilter(std::vector<cv::Mat_<float> > &input, int mask_type, int mask_size);
+
+    cv::Mat UnwrappedPhase(std::vector<cv::Mat_<float> >& input);
+
+    cv::Mat PhaseDiference(cv::Mat_<float> phase1, cv::Mat_<float> phase2);
 
     /**
     Draw a square in image

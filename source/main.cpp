@@ -10,34 +10,59 @@ using namespace cv;
 
 int main(){
     Fourier fourier;
-    Mat imageLeft, imageF_Left;
-    Mat imageRight, imageF_Right;
+    Mat imageLeft, imageF_Left, imageFI_Left, phase_Left;
+    Mat imageRight, imageF_Right, imageFI_Right, phase_Right;
+    Mat diffPhase;
+    std::vector<cv::Mat_<float> > ftL, ftiL;
+    std::vector<cv::Mat_<float> > ftR, ftiR;
 
     // Reading Images
     imageLeft = imread("../../resources/images/face01-Left.jpg", 0);
     imageRight = imread("../../resources/images/face01-Right.jpg", 0);
 
-    fourier.FourierDFT(imageLeft, imageF_Left);
-    fourier.FFTShift(imageF_Left, imageF_Left);
-    fourier.LobeFilter(imageF_Left, 0, 150);
-    fourier.FFTShift(imageF_Left, imageF_Left);
-    fourier.FourierDFTInverse(imageF_Left, imageF_Left);
+    // For Left image
+    ftL = fourier.FourierDFT(imageLeft);
+    fourier.FFTShift(ftL);
+    fourier.LobeFilter(ftL, 1, 150);
+    fourier.FFTShift(ftL);
+    ftiL = fourier.FourierDFTInverse(ftL);
 
-    //fourier.FourierDFT();
-    //imageLeft_Fourier = fourier.LobeFilter(imageLeft_Fourier,0);
-    //imageLeft_Fourier = fourier.FFTShift(imageLeft_Fourier);
-    //imageLeft_Fourier = fourier.FourierInverseDFT(imageLeft_Fourier);
+    imageF_Left = fourier.getImageMagnitude(ftL);
+    imageFI_Left = fourier.getImageMagnitude(ftiL);
+    phase_Left = fourier.UnwrappedPhase(ftiL);
 
+    // For Right image
+    ftR = fourier.FourierDFT(imageRight);
+    fourier.FFTShift(ftR);
+    fourier.LobeFilter(ftR, 1, 150);
+    fourier.FFTShift(ftR);
+    ftiR = fourier.FourierDFTInverse(ftR);
+
+    imageF_Right = fourier.getImageMagnitude(ftR);
+    imageFI_Right = fourier.getImageMagnitude(ftiR);
+    phase_Right = fourier.UnwrappedPhase(ftiR);
+
+    diffPhase = fourier.PhaseDiference(phase_Left, phase_Right);
     // Display images
+/*
     namedWindow("Left Image");
     namedWindow("Left Image Fourier");
     moveWindow("Left Image", 50, 50);
     moveWindow("Left Image Fourier", 700, 50);
 
     cv::normalize(imageF_Left, imageF_Left, 0, 1, CV_MINMAX);
+    cv::normalize(imageFI_Left, imageFI_Left, 0, 1, CV_MINMAX);
+    cv::normalize(phase_Left, phase_Left, 0, 1, CV_MINMAX);
+
     imshow("Left Image",imageLeft);
     imshow("Left Image Fourier", imageF_Left);
+    imshow("Left Image Fourier Inverse", imageFI_Left);
+    imshow("Left Unwrapped Phase", phase_Left);
+*/
+    cv::normalize(diffPhase, diffPhase, 0, 1, CV_MINMAX);
+    imshow("Diff Phase", diffPhase);
     waitKey();
+
 
 /*
     // Capture
@@ -99,7 +124,7 @@ int main(){
 */
     // std::cout << "Press any key to finish.." << std::endl;
     // cv::waitKey();
-    cvDestroyAllWindows();
+    //cvDestroyAllWindows();
 }
 
 
