@@ -2,11 +2,19 @@
 #define STEREOCONTROLLER_H
 
 #include "fourier.h"
+#include "camera.h"
+#include "stereovision.h"
+#include "fourier.h"
 
-class StereoController : public StereoController
+
+class StereoController
 {
 public:
     StereoController();
+
+    void demo_figure();
+    void demo_cube();
+    void demo_prism();
 
 private:
     Fourier fourier;

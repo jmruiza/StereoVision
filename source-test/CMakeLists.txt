@@ -56,3 +56,16 @@ target_link_libraries(Fourier ${Fourier_LIBS})
 
 # -------------------------------------------------------
 
+# Project StereoMatch
+set(StereoMatch_SRC
+    stereo_match.cpp
+)
+
+set(StereoMatch_LIBS
+    ${OpenCV_LIBS}
+)
+
+add_executable(StereoMatch ${StereoMatch_SRC})
+target_link_libraries(StereoMatch ${StereoMatch_LIBS})
+
+# -------------------------------------------------------
