@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <time.h>
 
 #include "cameracalibrator.h"
 #include "stereocontroller.h"
@@ -11,8 +12,8 @@ using namespace std;
 using namespace cv;
 
 void CaptureFormCamera();
-void CalibrateCamera();
-void getDataOfFile(ifstream *file);
+void CalibrateCamera(char nameFile[]);
+void getDataOfFile(FileStorage &file);
 
 int main(){
     /*
@@ -20,18 +21,20 @@ int main(){
     stereoCont.demo_cube();
     */
 
-    // Parametros iniciales
-    // int accion;
+    //ifstream file("conf.dat");
+    //if(file){
 
-    ifstream file("conf.dat");
-    if(file){
-        cout << "Recuperar datos del archivo..." << endl;
-        getDataOfFile(&file);
+    char nameFile[] = "conf.xml";
+    FileStorage file;
+    if(file.open(nameFile, file.READ)){
+        cout << "Read data from: \"" << nameFile << "\"" << endl;
+        getDataOfFile(file);
     }
     else{
+        file.release();
         cout << "Calibrar: " << endl;
         //CaptureFormCamera();
-        CalibrateCamera();
+        CalibrateCamera(nameFile);
     }
 /*
     // Capture
@@ -155,13 +158,18 @@ void CaptureFormCamera(){
     cv::destroyAllWindows();
  }
 
-void CalibrateCamera(){
+void CalibrateCamera( char nameFile[] ){
     // Se crea una imagen vacia
     Mat imageL, imageR;
 
     // Se crea un vector que almacenara todos los nombres de las imagenes
     vector<string> filelistL;
     vector<string> filelistR;
+
+    cv::namedWindow("Left Camera");
+    cv::namedWindow("Right Camera");
+    cv::moveWindow("Left Camera", 0, 0);
+    cv::moveWindow("Right Camera", 700, 0);
 
     // ciclo que genera la lista de los nombres de las imagenes
     for (int i=1; i<=20; i++) {
@@ -179,8 +187,8 @@ void CalibrateCamera(){
         imageL = imread(strLeft.str(), 0);
         imageR = imread(strRight.str(), 0);
 
-        imshow("Image L", imageL);
-        imshow("Image R", imageR);
+        imshow("Left Camera", imageL);
+        imshow("Right Camera", imageR);
 
         // Retardo para desplegar las imagenes
         waitKey(100);
@@ -212,35 +220,47 @@ void CalibrateCamera(){
     //Mat uImage= cameraCalibrator.remap(image);
 
     // Mostrar la Matriz de la camara
-    Mat cameraMatrixL = camCalibratorL.getCameraMatrix();
-    Mat cameraMatrixR = camCalibratorL.getCameraMatrix();
+    Mat LeftcameraMatrix = camCalibratorL.getCameraMatrix();
+    Mat RightcameraMatrix = camCalibratorL.getCameraMatrix();
 
-    ofstream archivo("conf.dat");
-    archivo << "Left Camera intrinsic: " << cameraMatrixL.rows << "x" << cameraMatrixL.cols << endl;
+    FileStorage file(nameFile, FileStorage::WRITE);
+    file << "LeftCameraMatrix" << LeftcameraMatrix;
+    file << "RightCameraMatrix" << RightcameraMatrix;
+    /*
+    archivo << "Left Camera Matrix: " << endl;
     archivo << cameraMatrixL.at<double>(0,0) << "\t\t" << cameraMatrixL.at<double>(0,1) << "\t\t" << cameraMatrixL.at<double>(0,2) << endl;
     archivo << cameraMatrixL.at<double>(1,0) << "\t\t" << cameraMatrixL.at<double>(1,1) << "\t\t" << cameraMatrixL.at<double>(1,2) << endl;
     archivo << cameraMatrixL.at<double>(2,0) << "\t\t" << cameraMatrixL.at<double>(2,1) << "\t\t" << cameraMatrixL.at<double>(2,2) << endl;
-    archivo << "Right Camera intrinsic: " << cameraMatrixL.rows << "x" << cameraMatrixL.cols << endl;
+    archivo << "Right Camera Matrix: " << endl;
     archivo << cameraMatrixR.at<double>(0,0) << "\t\t" << cameraMatrixR.at<double>(0,1) << "\t\t" << cameraMatrixR.at<double>(0,2) << endl;
     archivo << cameraMatrixR.at<double>(1,0) << "\t\t" << cameraMatrixR.at<double>(1,1) << "\t\t" << cameraMatrixR.at<double>(1,2) << endl;
     archivo << cameraMatrixR.at<double>(2,0) << "\t\t" << cameraMatrixR.at<double>(2,1) << "\t\t" << cameraMatrixR.at<double>(2,2) << endl;
-    archivo.close();
-/*
-     cout << " Camera intrinsic: " << cameraMatrix.rows << "x" << cameraMatrix.cols << endl;
-     cout << cameraMatrix.at<double>(0,0) << "\t\t" << cameraMatrix.at<double>(0,1) << "\t\t" << cameraMatrix.at<double>(0,2) << endl;
-     cout << cameraMatrix.at<double>(1,0) << "\t\t" << cameraMatrix.at<double>(1,1) << "\t\t" << cameraMatrix.at<double>(1,2) << endl;
-     cout << cameraMatrix.at<double>(2,0) << "\t\t" << cameraMatrix.at<double>(2,1) << "\t\t" << cameraMatrix.at<double>(2,2) << endl;
+    */
+    file.release();
 
-     imshow("Imagen ajustada, sin distorcion", uImage);
-     cvWaitKey();
-*/
+    std::cout << "Left Camera Matrix: " << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(0,0) << "\t\t" << LeftcameraMatrix.at<double>(0,1) << "\t\t" << LeftcameraMatrix.at<double>(0,2) << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(1,0) << "\t\t" << LeftcameraMatrix.at<double>(1,1) << "\t\t" << LeftcameraMatrix.at<double>(1,2) << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(2,0) << "\t\t" << LeftcameraMatrix.at<double>(2,1) << "\t\t" << LeftcameraMatrix.at<double>(2,2) << std::endl << std::endl;
+    std::cout << "Right Camera Matrix: " << std::endl;
+    std::cout << RightcameraMatrix.at<double>(0,0) << "\t\t" << RightcameraMatrix.at<double>(0,1) << "\t\t" << RightcameraMatrix.at<double>(0,2) << std::endl;
+    std::cout << RightcameraMatrix.at<double>(1,0) << "\t\t" << RightcameraMatrix.at<double>(1,1) << "\t\t" << RightcameraMatrix.at<double>(1,2) << std::endl;
+    std::cout << RightcameraMatrix.at<double>(2,0) << "\t\t" << RightcameraMatrix.at<double>(2,1) << "\t\t" << RightcameraMatrix.at<double>(2,2) << std::endl << std::endl;
+    std::cout << "Saved in: \"" << nameFile << "\"" << std::endl;
 }
 
-void getDataOfFile(ifstream *file){
-    char line;
-    while(file->good()){
-        line = file->get();
-        cout << line;
-    }
+void getDataOfFile(FileStorage &file){
+    cv::Mat LeftcameraMatrix, RightcameraMatrix;
+    file["LeftCameraMatrix"] >> LeftcameraMatrix;
+    file["RightCameraMatrix"] >> RightcameraMatrix;
+
+    std::cout << "Left Camera Matrix: " << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(0,0) << "\t\t" << LeftcameraMatrix.at<double>(0,1) << "\t\t" << LeftcameraMatrix.at<double>(0,2) << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(1,0) << "\t\t" << LeftcameraMatrix.at<double>(1,1) << "\t\t" << LeftcameraMatrix.at<double>(1,2) << std::endl;
+    std::cout << LeftcameraMatrix.at<double>(2,0) << "\t\t" << LeftcameraMatrix.at<double>(2,1) << "\t\t" << LeftcameraMatrix.at<double>(2,2) << std::endl;
+    std::cout << "Right Camera Matrix: " << std::endl;
+    std::cout << RightcameraMatrix.at<double>(0,0) << "\t\t" << RightcameraMatrix.at<double>(0,1) << "\t\t" << RightcameraMatrix.at<double>(0,2) << std::endl;
+    std::cout << RightcameraMatrix.at<double>(1,0) << "\t\t" << RightcameraMatrix.at<double>(1,1) << "\t\t" << RightcameraMatrix.at<double>(1,2) << std::endl;
+    std::cout << RightcameraMatrix.at<double>(2,0) << "\t\t" << RightcameraMatrix.at<double>(2,1) << "\t\t" << RightcameraMatrix.at<double>(2,2) << std::endl;
 }
 
