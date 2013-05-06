@@ -36,6 +36,22 @@ int main(){
         //CaptureFormCamera();
         CalibrateCamera(nameFile);
     }
+
+    CameraCalibrator CamCal;
+    cv::namedWindow("From Camera");
+    cv::namedWindow("Rectify");
+    cv::moveWindow("From Camera", 0, 0);
+    cv::moveWindow("Rectify", 700, 0);
+
+    cv::Mat image = cv::imread("../../resources/images/IM01L.jpg");
+
+
+    cv::imshow("From Camera", image);
+    cv::imshow("Rectify", image);
+
+    cv::waitKey();
+    cv::destroyAllWindows();
+
 /*
     // Capture
     int keypress = 0;
@@ -159,10 +175,9 @@ void CaptureFormCamera(){
  }
 
 void CalibrateCamera( char nameFile[] ){
-    // Se crea una imagen vacia
-    Mat imageL, imageR;
+    cv::Mat imageL, imageR;
 
-    // Se crea un vector que almacenara todos los nombres de las imagenes
+    // Create vector to save all images name
     vector<string> filelistL;
     vector<string> filelistR;
 
@@ -171,9 +186,9 @@ void CalibrateCamera( char nameFile[] ){
     cv::moveWindow("Left Camera", 0, 0);
     cv::moveWindow("Right Camera", 700, 0);
 
-    // ciclo que genera la lista de los nombres de las imagenes
+    // Generate the name of files dynamically
     for (int i=1; i<=20; i++) {
-        // Se genera el nombre para cada imagen incluyendo su ruta
+        // Generate the name with path of files dynamically.
         stringstream strLeft;
         strLeft << "../../resources/images/IM" << setw(2) << setfill('0') << i << "L.jpg";
         stringstream strRight;
@@ -191,9 +206,9 @@ void CalibrateCamera( char nameFile[] ){
         imshow("Right Camera", imageR);
 
         // Retardo para desplegar las imagenes
-        waitKey(100);
+        cv::waitKey(100);
     }
-    destroyAllWindows();
+    cv::destroyAllWindows();
 
     // Se crea un objeto de la clase CameraCalibrator
     CameraCalibrator camCalibratorL;
@@ -209,8 +224,8 @@ void CalibrateCamera( char nameFile[] ){
     // Calibrando la camara
     camCalibratorL.setCalibrationFlag(true, true);
     camCalibratorR.setCalibrationFlag(true, true);
-    Size sizeL = imageL.size();
-    Size sizeR = imageR.size();
+    cv::Size sizeL = imageL.size();
+    cv::Size sizeR = imageR.size();
     camCalibratorL.calibrate(sizeL);
     camCalibratorR.calibrate(sizeR);
 
@@ -220,22 +235,12 @@ void CalibrateCamera( char nameFile[] ){
     //Mat uImage= cameraCalibrator.remap(image);
 
     // Mostrar la Matriz de la camara
-    Mat LeftcameraMatrix = camCalibratorL.getCameraMatrix();
-    Mat RightcameraMatrix = camCalibratorL.getCameraMatrix();
+    cv::Mat LeftcameraMatrix = camCalibratorL.getCameraMatrix();
+    cv::Mat RightcameraMatrix = camCalibratorL.getCameraMatrix();
 
     FileStorage file(nameFile, FileStorage::WRITE);
     file << "LeftCameraMatrix" << LeftcameraMatrix;
     file << "RightCameraMatrix" << RightcameraMatrix;
-    /*
-    archivo << "Left Camera Matrix: " << endl;
-    archivo << cameraMatrixL.at<double>(0,0) << "\t\t" << cameraMatrixL.at<double>(0,1) << "\t\t" << cameraMatrixL.at<double>(0,2) << endl;
-    archivo << cameraMatrixL.at<double>(1,0) << "\t\t" << cameraMatrixL.at<double>(1,1) << "\t\t" << cameraMatrixL.at<double>(1,2) << endl;
-    archivo << cameraMatrixL.at<double>(2,0) << "\t\t" << cameraMatrixL.at<double>(2,1) << "\t\t" << cameraMatrixL.at<double>(2,2) << endl;
-    archivo << "Right Camera Matrix: " << endl;
-    archivo << cameraMatrixR.at<double>(0,0) << "\t\t" << cameraMatrixR.at<double>(0,1) << "\t\t" << cameraMatrixR.at<double>(0,2) << endl;
-    archivo << cameraMatrixR.at<double>(1,0) << "\t\t" << cameraMatrixR.at<double>(1,1) << "\t\t" << cameraMatrixR.at<double>(1,2) << endl;
-    archivo << cameraMatrixR.at<double>(2,0) << "\t\t" << cameraMatrixR.at<double>(2,1) << "\t\t" << cameraMatrixR.at<double>(2,2) << endl;
-    */
     file.release();
 
     std::cout << "Left Camera Matrix: " << std::endl;
