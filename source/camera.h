@@ -77,8 +77,6 @@ public:
     */
     int get_devices_number();
 
-
-
 private:
 
     // Attributes of devices (All detected devices)

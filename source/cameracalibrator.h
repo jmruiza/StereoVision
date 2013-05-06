@@ -1,3 +1,10 @@
+/*
+    Creator: Juan Manuel Ruiz
+    Date: May 2th 2013
+
+    This class calibrate a camera
+*/
+
 #ifndef CAMERACALIBRATOR_H
 #define CAMERACALIBRATOR_H
 
@@ -10,22 +17,6 @@
 #include <opencv2/highgui/highgui.hpp>
 
 class CameraCalibrator {
-
-private:
-    // points to find
-    std::vector< std::vector<cv::Point3f> > objectPoints;
-    std::vector< std::vector<cv::Point2f> > imagePoints;
-
-    // output Matrix
-    cv::Mat cameraMatrix;
-    cv::Mat distCoeffs;
-
-    // flag to specify how calibration is done
-    int flag;
-
-    // used in image undistortion
-    cv::Mat map1, map2;
-    bool mustInitUndistort;
 
 public:
     /**
@@ -87,6 +78,22 @@ public:
      * @return  distCoeffs
      */
     cv::Mat getDistCoeffs();
+
+private:
+    // points to find
+    std::vector< std::vector<cv::Point3f> > objectPoints;
+    std::vector< std::vector<cv::Point2f> > imagePoints;
+
+    // output Matrix
+    cv::Mat cameraMatrix;
+    cv::Mat distCoeffs;
+
+    // flag to specify how calibration is done
+    int flag;
+
+    // used in image undistortion
+    cv::Mat map1, map2;
+    bool mustInitUndistort;
 };
 
 #endif // CAMERACALIBRATOR_H

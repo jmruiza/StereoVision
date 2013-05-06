@@ -1,7 +1,7 @@
 #include "cameracalibrator.h"
 
 // Constructor
-CameraCalibrator::StereoCalibration(){
+CameraCalibrator::CameraCalibrator(){
     flag = 0;
     mustInitUndistort = true;
 }
