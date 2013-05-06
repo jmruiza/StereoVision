@@ -11,7 +11,8 @@ set(Stereo_SRC
     cameracalibrator.cpp
 
     stereovision.cpp
-    stereocontroller.cpp    
+    stereocontroller.cpp
+    stereocalibrator.cpp
 )
 
 set(Stereo_LIBS
