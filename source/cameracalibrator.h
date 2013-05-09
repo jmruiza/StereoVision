@@ -66,18 +66,11 @@ public:
      */
     cv::Mat remap(const cv::Mat &image);
 
-    // Getters
-    /**
-     * @brief   getCameraMatrix
-     * @return  cameraMatrix
-     */
+    // Getters and setters
     cv::Mat getCameraMatrix();
-
-    /**
-     * @brief   getDistCoeffs
-     * @return  distCoeffs
-     */
     cv::Mat getDistCoeffs();
+    void setCameraMatrix(cv::Mat matrix);
+    void setDistCoeffs(cv::Mat coeff);
 
 private:
     // points to find

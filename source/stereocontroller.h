@@ -12,12 +12,17 @@ class StereoController
 public:
     StereoController();
 
+    bool ExistConfigurationFile();
+
     void demo_figure();
     void demo_cube();
     void demo_prism();
 
 private:
     Fourier fourier;
+
+    cv::FileStorage ConfigurationFile;
+    char* fileName;
 
     struct image_pair{
         cv::Mat Left;

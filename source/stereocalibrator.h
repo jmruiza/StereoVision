@@ -27,20 +27,35 @@ class StereoCalibrator
 public:
     StereoCalibrator();
 
+    CameraCalibrator CamCalib;
+
+    void demo();
+
     void CaptureFormCameras();
-    void CalibrateCameras(char nameFile[]);
+    void CalibrateCameras(const char nameFile[]);
     void getDataFromFile(cv::FileStorage &file);
 
     // Getters & Setters
+    void setN_Images(int n_image);
+    void setFileName(const char name[]);
+    void setLeftDevice(int device);
+    void setRightDevice(int device);
     void setLeftCameraMatrix(cv::Mat matrix);
     void setRightCameraMatrix(cv::Mat matrix);
+
+    int getN_Images();
+    const char* getFileName();
+    int getLeftDevice();
+    int getRightDevice();
     cv::Mat getLeftCameraMatrix();
     cv::Mat setRightCameraMatrix();
 
 private:
-    char fileName[];
-    cv::Mat LeftCameraMatrix;
-    cv::Mat RightCameraMatrix;
+    const char* fileName;
+    int N_Images;
+    int LeftDevice,RightDevice;
+    cv::Mat LeftCameraMatrix, RightCameraMatrix;
+    cv::Mat LeftDistCoeff, RightDistCoeff;
 };
 
 #endif // STEREOCALIBRATOR_H

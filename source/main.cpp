@@ -2,6 +2,7 @@
 #include <iomanip>
 
 #include "stereocontroller.h"
+#include "stereocalibrator.h"
 
 
 
@@ -9,6 +10,23 @@ using namespace std;
 using namespace cv;
 
 int main(){
+    // Program flux
+    StereoController stc;
+
+    // 1. First read configuration file
+    if(stc.ExistConfigurationFile()){
+        cout << "Exists!!" << endl;
+    }
+    else{
+        cout << "Not exists!!" << endl;
+    }
+
+
+
+
+    //StereoCalibrator StCalib;
+    //StCalib.demo();
+
     /*
     StereoController stereoCont;
     stereoCont.demo_cube();

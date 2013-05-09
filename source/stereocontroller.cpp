@@ -2,7 +2,20 @@
 
 StereoController::StereoController()
 {
+    fileName = "conf.xml";
 }
+
+bool StereoController::ExistConfigurationFile(){
+    if(ConfigurationFile.open(fileName, ConfigurationFile.READ)){
+        return true;
+    }
+    else{
+        ConfigurationFile.release();
+        return false;
+    }
+}
+
+
 
 void StereoController::demo_cube(){
     Fourier fourier;

@@ -126,7 +126,15 @@ void CameraCalibrator::setCalibrationFlag(bool radial8CoeffEnabled, bool tangent
         flag += CV_CALIB_RATIONAL_MODEL;
 }
 
-// Getters
+// Getters and setters
+void CameraCalibrator::setCameraMatrix(cv::Mat matrix){
+    cameraMatrix = matrix;
+}
+
+void CameraCalibrator::setDistCoeffs(cv::Mat coeff){
+    distCoeffs = coeff;
+}
+
 cv::Mat CameraCalibrator::getCameraMatrix(){
     return cameraMatrix;
 }

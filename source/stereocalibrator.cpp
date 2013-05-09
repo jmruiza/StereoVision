@@ -1,40 +1,45 @@
 #include "stereocalibrator.h"
 
-StereoCalibrator::StereoCalibrator()
-{
-    char nameFile[] = "conf.xml";
+StereoCalibrator::StereoCalibrator(){
+
+}
+
+void StereoCalibrator::demo(){
+    setFileName("conf.xml");
+
     cv::FileStorage file;
-    if(file.open(nameFile, file.READ)){
-        std::cout << "Read data from: \"" << nameFile << "\"" << std::endl;
+    if(file.open(getFileName(), file.READ)){
+        std::cout << "Read data from: \"" << getFileName() << "\"" << std::endl;
         getDataFromFile(file);
     }
     else{
         file.release();
         std::cout << "Calibrar: " << std::endl;
         //CaptureFormCameras();
-        CalibrateCameras(nameFile);
+        CalibrateCameras(getFileName());
     }
 
-    CameraCalibrator CamCal;
     cv::namedWindow("From Camera");
     cv::namedWindow("Rectify");
     cv::moveWindow("From Camera", 0, 0);
     cv::moveWindow("Rectify", 700, 0);
 
+    CamCalib.setCameraMatrix(LeftCameraMatrix);
+    CamCalib.setDistCoeffs(LeftDistCoeff);
     cv::Mat image = cv::imread("../../resources/images/IM01L.jpg");
-
+    cv::Mat image1 = CamCalib.remap(image);
 
     cv::imshow("From Camera", image);
-    cv::imshow("Rectify", image);
+    cv::imshow("Rectify", image1);
 
     cv::waitKey();
     cv::destroyAllWindows();
 }
 
 void StereoCalibrator::CaptureFormCameras(){
-    int devLeft = 0;
-    int devRight = 1;
-    int n_images = 20;
+    int devLeft = getLeftDevice();
+    int devRight = getRightDevice();
+    int n_images = getN_Images();
 
     // Camera class intance
     Cam Camera;
@@ -90,7 +95,7 @@ void StereoCalibrator::CaptureFormCameras(){
     cv::destroyAllWindows();
  }
 
-void StereoCalibrator::CalibrateCameras(char nameFile[]){
+void StereoCalibrator::CalibrateCameras(const char nameFile[]){
     cv::Mat imageL, imageR;
 
     // Create vector to save all images name
@@ -110,78 +115,102 @@ void StereoCalibrator::CalibrateCameras(char nameFile[]){
         std::stringstream strRight;
         strRight << "../../resources/images/IM" << std::setw(2) << std::setfill('0') << i << "R.jpg";
 
-        // Se agrega el nombre al vector
+        // Add name to vector
         filelistL.push_back(strLeft.str());
         filelistR.push_back(strRight.str());
 
-        // Se muestra cada imagen
+        // Show image
         imageL = cv::imread(strLeft.str(), 0);
         imageR = cv::imread(strRight.str(), 0);
 
         cv::imshow("Left Camera", imageL);
         cv::imshow("Right Camera", imageR);
-
-        // Retardo para desplegar las imagenes
         cv::waitKey(100);
     }
     cv::destroyAllWindows();
 
-    // Se crea un objeto de la clase CameraCalibrator
-    CameraCalibrator camCalibratorL;
-    CameraCalibrator camCalibratorR;
-
     // Se especifica el numero de esquinas verticales y horizontales internas
     cv::Size boardSize(8,6);
+    cv::Size size;
 
-    // Se abren todas las imagenes y se extraen sus puntos de las esquinas
-    camCalibratorL.addChessboardPoints(filelistL, boardSize);
-    camCalibratorR.addChessboardPoints(filelistR, boardSize);
+    // Calibrate Left device
+    CamCalib.addChessboardPoints(filelistL, boardSize);
+    CamCalib.setCalibrationFlag(true, true);
+    size = imageL.size();
+    CamCalib.calibrate(size);
+    LeftCameraMatrix = CamCalib.getCameraMatrix();
+    LeftDistCoeff = CamCalib.getDistCoeffs();
 
-    // Calibrando la camara
-    camCalibratorL.setCalibrationFlag(true, true);
-    camCalibratorR.setCalibrationFlag(true, true);
-    cv::Size sizeL = imageL.size();
-    cv::Size sizeR = imageR.size();
-    camCalibratorL.calibrate(sizeL);
-    camCalibratorR.calibrate(sizeR);
+    // Calibrate Right device
+    CamCalib.addChessboardPoints(filelistR, boardSize);
+    CamCalib.setCalibrationFlag(true, true);
+    size = imageR.size();
+    CamCalib.calibrate(size);
+    RightCameraMatrix = CamCalib.getCameraMatrix();
+    RightDistCoeff = CamCalib.getDistCoeffs();
 
-    //Imagen sin distorcion
-    //image = imread("PRUEBA01.png");
-    //imshow("Imagen Original", image);
-    //Mat uImage= cameraCalibrator.remap(image);
-
-    // Mostrar la Matriz de la camara
-    cv::Mat LeftcameraMatrix = camCalibratorL.getCameraMatrix();
-    cv::Mat RightcameraMatrix = camCalibratorL.getCameraMatrix();
-
+    // Save in file and show
     cv::FileStorage file(nameFile, cv::FileStorage::WRITE);
-    file << "LeftCameraMatrix" << LeftcameraMatrix;
-    file << "RightCameraMatrix" << RightcameraMatrix;
+    file << "LeftCameraMatrix" << LeftCameraMatrix;
+    file << "LeftDistCoeffs" << LeftDistCoeff;
+    file << "RightCameraMatrix" << RightCameraMatrix;
+    file << "RightDistCoeffs" << RightDistCoeff;
     file.release();
-
-    std::cout << "Left Camera Matrix: " << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(0,0) << "\t\t" << LeftcameraMatrix.at<double>(0,1) << "\t\t" << LeftcameraMatrix.at<double>(0,2) << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(1,0) << "\t\t" << LeftcameraMatrix.at<double>(1,1) << "\t\t" << LeftcameraMatrix.at<double>(1,2) << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(2,0) << "\t\t" << LeftcameraMatrix.at<double>(2,1) << "\t\t" << LeftcameraMatrix.at<double>(2,2) << std::endl << std::endl;
-    std::cout << "Right Camera Matrix: " << std::endl;
-    std::cout << RightcameraMatrix.at<double>(0,0) << "\t\t" << RightcameraMatrix.at<double>(0,1) << "\t\t" << RightcameraMatrix.at<double>(0,2) << std::endl;
-    std::cout << RightcameraMatrix.at<double>(1,0) << "\t\t" << RightcameraMatrix.at<double>(1,1) << "\t\t" << RightcameraMatrix.at<double>(1,2) << std::endl;
-    std::cout << RightcameraMatrix.at<double>(2,0) << "\t\t" << RightcameraMatrix.at<double>(2,1) << "\t\t" << RightcameraMatrix.at<double>(2,2) << std::endl << std::endl;
     std::cout << "Saved in: \"" << nameFile << "\"" << std::endl;
 }
 
 void StereoCalibrator::getDataFromFile(cv::FileStorage &file){
-    cv::Mat LeftcameraMatrix, RightcameraMatrix;
-    file["LeftCameraMatrix"] >> LeftcameraMatrix;
-    file["RightCameraMatrix"] >> RightcameraMatrix;
-
-    std::cout << "Left Camera Matrix: " << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(0,0) << "\t\t" << LeftcameraMatrix.at<double>(0,1) << "\t\t" << LeftcameraMatrix.at<double>(0,2) << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(1,0) << "\t\t" << LeftcameraMatrix.at<double>(1,1) << "\t\t" << LeftcameraMatrix.at<double>(1,2) << std::endl;
-    std::cout << LeftcameraMatrix.at<double>(2,0) << "\t\t" << LeftcameraMatrix.at<double>(2,1) << "\t\t" << LeftcameraMatrix.at<double>(2,2) << std::endl;
-    std::cout << "Right Camera Matrix: " << std::endl;
-    std::cout << RightcameraMatrix.at<double>(0,0) << "\t\t" << RightcameraMatrix.at<double>(0,1) << "\t\t" << RightcameraMatrix.at<double>(0,2) << std::endl;
-    std::cout << RightcameraMatrix.at<double>(1,0) << "\t\t" << RightcameraMatrix.at<double>(1,1) << "\t\t" << RightcameraMatrix.at<double>(1,2) << std::endl;
-    std::cout << RightcameraMatrix.at<double>(2,0) << "\t\t" << RightcameraMatrix.at<double>(2,1) << "\t\t" << RightcameraMatrix.at<double>(2,2) << std::endl;
+    file["LeftCameraMatrix"] >> LeftCameraMatrix;
+    file["LeftDistCoeffs"] >> LeftDistCoeff;
+    file["RightCameraMatrix"] >> RightCameraMatrix;
+    file["RightDistCoeffs"] >> RightDistCoeff;
 }
 
+// Getter and Setters
+void StereoCalibrator::setN_Images(int n_image){
+    N_Images = n_image;
+}
+
+void StereoCalibrator::setFileName(const char name[]){
+    fileName = name;
+}
+
+void StereoCalibrator::setLeftDevice(int device){
+    LeftDevice = device;
+}
+
+void StereoCalibrator::setRightDevice(int device){
+    RightDevice = device;
+}
+
+void StereoCalibrator::setLeftCameraMatrix(cv::Mat matrix){
+    LeftCameraMatrix = matrix;
+}
+
+void StereoCalibrator::setRightCameraMatrix(cv::Mat matrix){
+    RightCameraMatrix = matrix;
+}
+
+int StereoCalibrator::getN_Images(){
+    return N_Images;
+}
+
+const char* StereoCalibrator::getFileName(){
+    return fileName;
+}
+
+int StereoCalibrator::getLeftDevice(){
+    return LeftDevice;
+}
+
+int StereoCalibrator::getRightDevice(){
+    return RightDevice;
+}
+
+cv::Mat StereoCalibrator::getLeftCameraMatrix(){
+    return LeftCameraMatrix;
+}
+
+cv::Mat StereoCalibrator::setRightCameraMatrix(){
+    return RightCameraMatrix;
+}
